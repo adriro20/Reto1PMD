@@ -1,5 +1,12 @@
 <resources>
     <string name="app_name">Reto</string>
-    <string name="txtVolver">volver</string>
-    <string name="txtSalir">salir</string>
+    <string name="txtEjercicio">Ejercicio</string>
+    <string name="txtNombre">Nombre</string>
+    <string name="txtGrupo">Grupo muscular</string>
+    <string name="txtSalir">Salir</string>
+    <string name="txtVolver">Volver</string>
+    <string name="txtRepeticiones">Repeticiones</string>
+    <string name="txtSeries">Series</string>
+    <string name="txtDescripcion">Descripción</string>
+    <string name="txtCrear">Añadir ejercicio</string>
 </resources>
