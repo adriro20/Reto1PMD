@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Reto</string>
+    <string name="txtVolver">volver</string>
+    <string name="txtSalir">salir</string>
 </resources>
