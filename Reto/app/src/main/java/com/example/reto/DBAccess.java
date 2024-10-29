@@ -1,11 +1,10 @@
-import static android.database.sqlite.SQLiteDatabase.openOrCreateDatabase;
+package com.example.reto;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.widget.Toast;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,7 +22,7 @@ public class DBAccess implements DBAccesible {
             dataBase.execSQL(crearTablas);
 
         } catch (SQLiteException e) {
-            Toast.makeText(context, "Error al abrir/crear la base de datos: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(context, R.string.txtErrorCrearBD, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -41,10 +40,10 @@ public class DBAccess implements DBAccesible {
                 ejer.setImagen(cursor.getString(5));
                 ejer.setVideo(cursor.getString(6));
                 ejer.setAudio(cursor.getString(7));
-
                 ejercicios.put(ejer.getNombre(),ejer);
             }
         }
+
         return ejercicios;
     }
 
@@ -59,6 +58,8 @@ public class DBAccess implements DBAccesible {
                 ejer.getVideo(),
                 ejer.getAudio()
         });
+
+
     }
 
 

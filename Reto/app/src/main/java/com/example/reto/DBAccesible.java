@@ -1,3 +1,7 @@
+package com.example.reto;
+
+import com.example.reto.Ejercicio;
+
 import java.util.Map;
 import java.util.HashMap;
 

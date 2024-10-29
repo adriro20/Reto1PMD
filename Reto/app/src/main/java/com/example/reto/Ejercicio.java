@@ -1,3 +1,5 @@
+package com.example.reto;
+
 public class Ejercicio {
 
     private String nombre;
