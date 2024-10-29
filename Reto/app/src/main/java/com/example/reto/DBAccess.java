@@ -26,6 +26,7 @@ public class DBAccess implements DBAccesible {
         }
     }
 
+    @Override
     public Map<String, Ejercicio> selectEjercicio(){
         Map<String, Ejercicio> ejercicios = new HashMap<>();
         Cursor cursor = dataBase.rawQuery(select, null);
@@ -47,6 +48,7 @@ public class DBAccess implements DBAccesible {
         return ejercicios;
     }
 
+    @Override
     public void insertEjercicio(Ejercicio ejer){
         dataBase.execSQL(insert, new Object[]{
                 ejer.getNombre(),
