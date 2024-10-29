@@ -2,4 +2,6 @@
     <string name="app_name">Reto</string>
     <string name="text_inicio">INICIO</string>
     <string name="text_salir">SALIR</string>
+    <string name="text_anadir">AÑADIR</string>
+    <string name="text_ver">VER</string>
 </resources>
