@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">Reto</string>
-    <string name="text_inicio">INICIO</string>
-    <string name="text_anadir">AÑADIR</string>
-    <string name="text_ver">VER</string>
+    <string name="text_inicio">Inicio</string>
+    <string name="text_anadir">Añadir</string>
+    <string name="text_ver">Ver</string>
     <string name="txtEjercicio">Ejercicio</string>
     <string name="txtNombre">Nombre</string>
     <string name="txtGrupo">Grupo muscular</string>
@@ -15,5 +15,4 @@
     <string name="txtErrorInsert">Error al insertar los datos</string>
     <string name="txtErrorSelect">Error al recoger los datos</string>
     <string name="txtErrorCrearBD">Error al abrir/crear la base de datos</string>
-
 </resources>
