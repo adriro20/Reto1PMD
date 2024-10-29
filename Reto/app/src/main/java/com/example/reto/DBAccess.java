@@ -9,7 +9,7 @@ import android.widget.Toast;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DBAccess {
+public class DBAccess implements DBAccesible {
 
     private SQLiteDatabase dataBase;
     private String crearTablas = "CREATE TABLE IF NOT EXISTS ejercicio (nombre varchar(30) PRIMARY KEY, grupo varchar(30), descripcion Text, repeticiones Integer, series Integer, imagen Text, video Text, audio Text);";
