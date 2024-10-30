@@ -7,10 +7,12 @@ import java.util.HashMap;
 
 public interface DBAccesible {
 
-    public Map<String, Ejercicio> getEjercicios();
+    public Map<String, Ejercicio> getEjerciciosGrupoMuscular(Integer id);
+
+    public Map<Integer, String> getGrupos();
 
     public void setEjercicio(Ejercicio ejer);
 
-    public Map<Integer, String> getGrupos();
+
 
 }

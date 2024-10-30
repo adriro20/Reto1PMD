@@ -17,7 +17,7 @@ public class DBAccess implements DBAccesible {
     private String selectIdGrupo = "SELECT id FROM grupo WHERE nombre = ?";
     private String selectNombreGrupo = "SELECT nombre FROM grupo WHERE id = ?";
     private String selectGrupos = "SELECT * FROM grupo";
-    private String select = "SELECT * FROM ejercicio";
+    private String selectEjercicioPorGrupo = "SELECT * FROM ejercicio WHERE idGrupo = ?";
     private String insertGrupos = "INSERT INTO grupo(nombre) VALUES ('brazo'),('pierna'),('pecho'),('espalda')";
     private String insertEjercicio = "INSERT INTO ejercicio (nombre, idGrupo, descripcion, repeticiones, series, imagen, video, audio) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -57,11 +57,11 @@ public class DBAccess implements DBAccesible {
     }
 
     @Override
-    public Map<String, Ejercicio> getEjercicios(){
+    public Map<String, Ejercicio> getEjerciciosGrupoMuscular(Integer id){
         Map<String, Ejercicio> ejercicios = new HashMap<>();
         Cursor cursor = null;
         try{
-            cursor = dataBase.rawQuery(select, null);
+            cursor = dataBase.rawQuery(selectEjercicioPorGrupo, new String[]{String.valueOf(id)});
             if(cursor.getCount() != 0){
                 while(cursor.moveToNext()){
                     Ejercicio ejer = new Ejercicio();
