@@ -12,11 +12,16 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class GrupoMuscularArctivity extends AppCompatActivity {
     private Button btnSalir;
     private Button btnVolver;
     private Spinner cbGrupo;
     private TableLayout tabla;
+    Map<String, Ejercicio> ejercicios = new HashMap<>();
+    DBAccesible dao ;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +32,9 @@ public class GrupoMuscularArctivity extends AppCompatActivity {
         btnVolver = (Button) findViewById(R.id.btnVolver);
         cbGrupo = (Spinner) findViewById(R.id.cboxMusculos);
         tabla = (TableLayout) findViewById(R.id.tablaEjer);
-        cargarTabla();
+        ejercicios = dao.selectEjercicio();
+        cargarTabla(ejercicios);
+        cargarCombo();
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -35,7 +42,11 @@ public class GrupoMuscularArctivity extends AppCompatActivity {
         });
     }
 
-    private void cargarTabla() {
+    private void cargarCombo() {
+        
+    }
+
+    private void cargarTabla(Map<String, Ejercicio> ejercicios) {
 
     }
 }
