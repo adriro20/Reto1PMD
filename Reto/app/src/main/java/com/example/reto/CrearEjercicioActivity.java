@@ -55,8 +55,6 @@ public class CrearEjercicioActivity extends AppCompatActivity {
         btnCrear = findViewById(R.id.btnCrear);
         btnCrear.setOnClickListener(this::crearEjercicio);
 
-        Intent intent = getIntent();
-        ejercicio = (Ejercicio) intent.getSerializableExtra("EJERCICIO");
         
     }
 
