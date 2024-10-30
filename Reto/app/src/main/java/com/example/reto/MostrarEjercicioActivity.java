@@ -57,6 +57,7 @@ public class MostrarEjercicioActivity extends AppCompatActivity {
             etSeries.setText(ejercicio.getSeries());
             etRepeticiones.setText(ejercicio.getRepeticiones());
             etDescripcion.setText(ejercicio.getDescripcion());
+
         }catch(NullPointerException e){
             e.printStackTrace();
         }
