@@ -33,29 +33,31 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
         btnSalir = (Button) findViewById(R.id.btnSalir);
-        btnSalir.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
+        btnSalir.setOnClickListener(this::cerrarApp);
         btnAnadir = (Button) findViewById(R.id.btnAnadir);
-        btnAnadir.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, CrearEjercicioActivity.class);
-                startActivityForResult(intent, anadirActivity);
-            }
-        });
+        btnAnadir.setOnClickListener(this::irAAnadir);
         btnVer = (Button) findViewById(R.id.btnVer);
-        btnVer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, GrupoMuscularArctivity.class);
-                startActivityForResult(intent, grupoActivity);
-            }
-        });
+        btnVer.setOnClickListener(this::irAGrupo);
         comboGrupoMusc = (Spinner) findViewById(R.id.comboGrupoMusc);
         tablaEjercicios = (TableLayout) findViewById(R.id.tablaEjercicios);
+        cargarDatosEnCombo();
+    }
+
+    private void cerrarApp(View view) {
+        finishAffinity();
+    }
+
+    private void irAAnadir(View view) {
+        Intent intent = new Intent(MainActivity.this, CrearEjercicioActivity.class);
+        startActivityForResult(intent, anadirActivity);
+    }
+
+    private void irAGrupo(View view) {
+        Intent intent = new Intent(MainActivity.this, GrupoMuscularActivity.class);
+        startActivityForResult(intent, grupoActivity);
+    }
+
+    private void cargarDatosEnCombo() {
+        
     }
 }
