@@ -5,7 +5,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DBAccess implements DBAccesible {
@@ -16,12 +19,15 @@ public class DBAccess implements DBAccesible {
     private String crearTablaEjercicio = "CREATE TABLE IF NOT EXISTS ejercicio (nombre varchar(30) PRIMARY KEY, idGrupo Integer, descripcion Text, repeticiones Integer, series Integer, imagen Text, video Text, audio Text, FOREIGN KEY (idGrupo) REFERENCES grupo(id) ON DELETE CASCADE);";
     private String selectIdGrupo = "SELECT id FROM grupo WHERE nombre = ?";
     private String selectNombreGrupo = "SELECT nombre FROM grupo WHERE id = ?";
-    private String selectGrupos = "SELECT * FROM grupo";
+    private String selectGrupos = "SELECT nombre FROM grupo";
     private String selectEjercicioPorGrupo = "SELECT * FROM ejercicio WHERE idGrupo = ?";
     private String insertGrupos = "INSERT INTO grupo(nombre) VALUES ('brazo'),('pierna'),('pecho'),('espalda')";
     private String insertEjercicio = "INSERT INTO ejercicio (nombre, idGrupo, descripcion, repeticiones, series, imagen, video, audio) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
+    private Context context;
+
     public DBAccess(Context context) {
+        this.context = context;
         try {
             dataBase = context.openOrCreateDatabase("BDEjercicios", Context.MODE_PRIVATE, null);
             dataBase.execSQL(crearTablaGrupo);
@@ -34,18 +40,18 @@ public class DBAccess implements DBAccesible {
     }
 
     @Override
-    public Map<Integer, String> getGrupos() {
-        Map<Integer, String> grupos = new HashMap<>();
+    public List<String> getGrupos() {
+        List<String> grupos = new ArrayList<>();
         Cursor cursor = null;
         try{
             cursor = dataBase.rawQuery(selectGrupos, null);
             if(cursor.getCount() != 0){
                 while (cursor.moveToNext()){
-                    grupos.put(Integer.parseInt(cursor.getString(0)),cursor.getString(1));
+                    grupos.add(cursor.getString(0));
                 }
             }
         }catch(SQLiteException e){
-            e.printStackTrace();
+            Toast.makeText(context, "Error al recoger los datos", Toast.LENGTH_LONG).show();
         }finally {
             if(cursor != null){
                 cursor.close();
@@ -77,7 +83,7 @@ public class DBAccess implements DBAccesible {
                 }
             }
         }catch(SQLiteException e){
-            e.printStackTrace();
+            Toast.makeText(context, "Error al recoger los datos", Toast.LENGTH_LONG).show();
         }finally {
             if(cursor != null){
                 cursor.close();
@@ -112,7 +118,7 @@ public class DBAccess implements DBAccesible {
                 id = Integer.parseInt(cursor.getString(0));
             }
         }catch(SQLiteException e){
-            e.printStackTrace();
+            Toast.makeText(context, "Error al recoger los datos", Toast.LENGTH_LONG).show();
         }finally {
             if(cursor != null){
                 cursor.close();
@@ -133,7 +139,7 @@ public class DBAccess implements DBAccesible {
                 nombre = cursor.getString(0);
             }
         }catch(SQLiteException e){
-            e.printStackTrace();
+            Toast.makeText(context, "Error al recoger los datos", Toast.LENGTH_LONG).show();
         }finally {
             if(cursor != null){
                 cursor.close();

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -48,19 +49,23 @@ public class MostrarEjercicioActivity extends AppCompatActivity {
         btnVolver = findViewById(R.id.btnVolver);
         btnVolver.setOnClickListener(this::volverAtras);
 
-        Intent intent = getIntent();
-        ejercicio = (Ejercicio) intent.getSerializableExtra("EJERCICIO");
-
-        try{
+        Intent recogerIntent = getIntent();
+        ejercicio = (Ejercicio) recogerIntent.getSerializableExtra("EJERCICIO");
+        if(ejercicio != null){
             etNombre.setText(ejercicio.getNombre());
             etGrupo.setText(ejercicio.getGrupo());
             etSeries.setText(ejercicio.getSeries());
             etRepeticiones.setText(ejercicio.getRepeticiones());
             etDescripcion.setText(ejercicio.getDescripcion());
-
-        }catch(NullPointerException e){
-            e.printStackTrace();
+        }else{
+            Toast.makeText(this, "Ha sucedido un error al cargar el ejercicio seleccionado" ,
+                    Toast.LENGTH_LONG).show();
+            Intent intentError = new Intent();
+            setResult(RESULT_CANCELED, intentError);
+            finish();
         }
+
+
 
     }
 
