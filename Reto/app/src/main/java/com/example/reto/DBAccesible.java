@@ -14,6 +14,6 @@ public interface DBAccesible {
 
     public void setEjercicio(Ejercicio ejer);
 
-
+    public String getNombreGrupo(Integer id);
 
 }

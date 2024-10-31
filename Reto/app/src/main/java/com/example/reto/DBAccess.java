@@ -129,7 +129,8 @@ public class DBAccess implements DBAccesible {
         return id;
     }
 
-    private String getNombreGrupo(Integer id){
+    @Override
+    public String getNombreGrupo(Integer id){
         String nombre = null;
         Cursor cursor = null;
         try{
