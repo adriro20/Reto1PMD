@@ -135,7 +135,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
-        android:id="@+id/imageButton"
+        android:id="@+id/ibImagen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="528dp"
@@ -145,7 +145,7 @@
         app:srcCompat="@drawable/iconoimagen" />
 
     <ImageButton
-        android:id="@+id/imageButton2"
+        android:id="@+id/ibVideo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="528dp"
@@ -155,7 +155,7 @@
         app:srcCompat="@drawable/iconovideo" />
 
     <ImageButton
-        android:id="@+id/imageButton3"
+        android:id="@+id/ibAudio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="528dp"
