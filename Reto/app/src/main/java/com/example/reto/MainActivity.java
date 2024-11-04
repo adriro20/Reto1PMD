@@ -3,9 +3,14 @@ package com.example.reto;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,12 +18,19 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class MainActivity extends AppCompatActivity {
     Button btnSalir = null;
     Button btnAnadir = null;
     Button btnVer = null;
     Spinner comboGrupoMusc = null;
+    private List<String> grupos;
+    private DBAccesible dao;
     TableLayout tablaEjercicios = null;
+    private Map<String, Ejercicio> ejercicios = new HashMap<>();
     private final int anadirActivity = 1;
     private final int grupoActivity = 2;
 
@@ -32,15 +44,60 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
         btnSalir = (Button) findViewById(R.id.btnSalir);
         btnSalir.setOnClickListener(this::cerrarApp);
+
         btnAnadir = (Button) findViewById(R.id.btnAnadir);
         btnAnadir.setOnClickListener(this::irAAnadir);
+
         btnVer = (Button) findViewById(R.id.btnVer);
         btnVer.setOnClickListener(this::irAGrupo);
+
         comboGrupoMusc = (Spinner) findViewById(R.id.comboGrupoMusc);
-        tablaEjercicios = (TableLayout) findViewById(R.id.tablaEjercicios);
         cargarDatosEnCombo();
+        comboGrupoMusc.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                cargarTabla();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        tablaEjercicios = (TableLayout) findViewById(R.id.tablaEjercicios);
+
+    }
+
+    private void cargarTabla() {
+        //limpiar los datos de la tabla
+        tablaEjercicios.removeAllViews();
+        String grupo = (String) comboGrupoMusc.getSelectedItem();
+        ejercicios = dao.getEjerciciosGrupoMuscular(grupo);
+        for(Map.Entry<String, Ejercicio> ejer : ejercicios.entrySet()){
+            //creamos una fila
+            TableRow row = new TableRow(this);
+
+            //crear la imagen para ponerla en la primera columna
+            ImageView imgEjer = new ImageView(this);
+
+
+            //creamos y rellenamos la columna de nombre
+            TextView txtNombre = new TextView(this);
+            txtNombre.setText(ejer.getValue().getNombre());
+            row.addView(txtNombre);
+
+            //creamos y rellenamos la columna de sries y repeticiones
+            TextView txtSeries = new TextView(this);
+            txtSeries.setText(ejer.getValue().getSeries()+" x "+ejer.getValue().getRepeticiones());
+            row.addView(txtSeries);
+
+            // Agregar la fila al TableLayout
+            tablaEjercicios.addView(row);
+        }
     }
 
     private void cerrarApp(View view) {
@@ -54,10 +111,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void irAGrupo(View view) {
         Intent intent = new Intent(MainActivity.this, GrupoMuscularActivity.class);
+        intent.putExtra("GRUPO", ((String)comboGrupoMusc.getSelectedItem()));
         startActivityForResult(intent, grupoActivity);
     }
 
     private void cargarDatosEnCombo() {
-        
+        grupos = dao.getGrupos();
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, grupos);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        comboGrupoMusc.setAdapter(adapter);
     }
 }
