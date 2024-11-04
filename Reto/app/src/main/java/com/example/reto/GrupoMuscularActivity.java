@@ -21,6 +21,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GrupoMuscularActivity extends AppCompatActivity {
@@ -30,10 +31,11 @@ public class GrupoMuscularActivity extends AppCompatActivity {
     private Spinner cbGrupo;
     private TableLayout tabla;
     private Map<String, Ejercicio> ejercicios = new HashMap<>();
-    private ArrayList<String> grupos = new ArrayList<>();
+    private List<String> grupos = new ArrayList<>();
     private Integer grupo;
     private DBAccesible dao;
     private final int main = 1;
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,12 +67,16 @@ public class GrupoMuscularActivity extends AppCompatActivity {
         });
 
         cbGrupo = (Spinner) findViewById(R.id.cboxMusculos);
+        //rellenar grupos
+        grupos = dao.getGrupos();
+        //crear un adaptador para meterlo en el cbGrupo
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, grupos);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         cbGrupo.setAdapter(adapter);
         cbGrupo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                ejercicios = dao.getEjerciciosGrupoMuscular(cbGrupo.getSelectedItemPosition());
                 cargarTabla();
             }
 
@@ -80,8 +86,7 @@ public class GrupoMuscularActivity extends AppCompatActivity {
             }
         });
         //poner por defecto el seleccionado
-        int defaultPosition = grupos.indexOf(grupo);
-        cbGrupo.setSelection(defaultPosition);
+        cbGrupo.setSelection(grupo);
 
         tabla = (TableLayout) findViewById(R.id.tablaEjer);
 
