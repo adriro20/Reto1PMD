@@ -1,6 +1,7 @@
 package com.example.reto;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -11,9 +12,12 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
-
+import android.Manifest;
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -49,8 +53,11 @@ public class CrearEjercicioActivity extends AppCompatActivity {
     private Boolean vidOK = false;
     private Boolean audOK = false;
 
-
     private DBAccesible dao;
+
+    private static final int REQUEST_CAMERA_PERMISSION = 100;
+    private static final int REQUEST_IMAGE_CAPTURE = 101;
+    private static final int REQUEST_VIDEO_CAPTURE = 102;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,38 +128,68 @@ public class CrearEjercicioActivity extends AppCompatActivity {
             Toast.makeText(this, "Primero introduce el nombre del ejercicio" ,
                     Toast.LENGTH_SHORT).show();
         }else{
-            Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-            String nombreArchivo = "VID_"+etNombre.getText().toString();
-            File dirImg = new File(getFilesDir(), "Videos");
-            if (!dirImg.exists()) {
-                dirImg.mkdirs(); // Crea el directorio si no existe
-            }
-
-            File imagen = new File(dirImg, nombreArchivo + ".mp4");
-            Uri uriVideo = FileProvider.getUriForFile(this, "com.example.reto.fileprovider", imagen);
-
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, uriVideo);
-            startActivityForResult(intent, 102);
+            comprobarPermisosCamara("VIDEO"); // Verifica permisos antes de abrir la cámara
         }
     }
 
-    private void subirImagen(View view) {
-        if(etNombre.getText().toString().isEmpty()){
-            Toast.makeText(this, "Primero introduce el nombre del ejercicio" ,
-                    Toast.LENGTH_SHORT).show();
-        }else{
+    public void subirImagen(View view) {
+        if (etNombre.getText().toString().isEmpty()) {
+            Toast.makeText(this, "Primero introduce el nombre del ejercicio", Toast.LENGTH_SHORT).show();
+        } else {
+            comprobarPermisosCamara("IMAGEN"); // Verifica permisos antes de abrir la cámara
+        }
+    }
+
+    private void comprobarPermisosCamara(String queHacer) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+        } else {
+            abrirCamara(queHacer); // Llama al método para abrir la cámara si ya se tiene el permiso
+        }
+    }
+
+    private void abrirCamara(String queHacer) {
+        if(queHacer.equals("IMAGEN")){
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            String nombreArchivo = "IMG_"+etNombre.getText().toString();
-            File dirImg = new File(getFilesDir(), "Imagenes");
-            if (!dirImg.exists()) {
-                dirImg.mkdirs(); // Crea el directorio si no existe
+            String nombreArchivo = "IMG_" + etNombre.getText().toString() + ".jpg";
+
+            File directorio = new File(getFilesDir(), "Imagenes");
+            if (!directorio.exists()) {
+                directorio.mkdirs(); // Crea el directorio si no existe
             }
 
-            File imagen = new File(dirImg, nombreArchivo + ".jpg");
+            File imagen = new File(directorio, nombreArchivo);
             Uri uriImagen = FileProvider.getUriForFile(this, "com.example.reto.fileprovider", imagen);
 
             intent.putExtra(MediaStore.EXTRA_OUTPUT, uriImagen);
             startActivityForResult(intent, 101);
+        }else{
+            Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+            String nombreArchivo = "VID_" + etNombre.getText().toString() + ".mp4";
+
+            File directorio = new File(getFilesDir(), "Videos");
+            if (!directorio.exists()) {
+                directorio.mkdirs(); // Crea el directorio si no existe
+            }
+
+            File video = new File(directorio, nombreArchivo);
+            Uri uriVideo = FileProvider.getUriForFile(this, "com.example.reto.fileprovider", video);
+
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, uriVideo);
+            startActivityForResult(intent, 102);
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CAMERA_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                abrirCamara("VIDEO"); // Permiso concedido, abre la cámara
+            } else {
+                Toast.makeText(this, "Permiso de cámara denegado", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
