@@ -25,6 +25,9 @@
             android:name=".CrearEjercicioActivity"
             android:exported="false" />
         <activity
+            android:name=".GrupoMuscularActivity"
+            android:exported="false" />
+        <activity
             android:name=".MostrarEjercicioActivity"
             android:exported="false" />
         <activity

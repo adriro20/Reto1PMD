@@ -20,7 +20,7 @@ public class DBAccess implements DBAccesible {
     private String selectIdGrupo = "SELECT id FROM grupo WHERE nombre = ?";
     private String selectNombreGrupo = "SELECT nombre FROM grupo WHERE id = ?";
     private String selectGrupos = "SELECT nombre FROM grupo";
-    private String selectEjercicioPorGrupo = "SELECT * FROM ejercicio WHERE nombre = ?";
+    private String selectEjercicioPorGrupo = "SELECT * FROM ejercicio WHERE idGrupo = (SELECT id FROM grupo WHERE nombre = ?)";
     private String insertGrupos = "INSERT INTO grupo(nombre) VALUES ('brazo'),('pierna'),('pecho'),('espalda')";
     private String insertEjercicio = "INSERT INTO ejercicio (nombre, idGrupo, descripcion, repeticiones, series, imagen, video, audio) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     private Context context;

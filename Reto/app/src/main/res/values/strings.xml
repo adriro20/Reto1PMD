@@ -15,4 +15,5 @@
     <string name="txtErrorInsert">Error al insertar los datos</string>
     <string name="txtErrorSelect">Error al recoger los datos</string>
     <string name="txtErrorCrearBD">Error al abrir/crear la base de datos</string>
+    <string name="txtNoHayEjercicios">no hay ejercicios de este grupo muscular</string>
 </resources>
