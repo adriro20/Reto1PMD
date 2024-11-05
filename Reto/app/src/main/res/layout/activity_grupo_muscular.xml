@@ -11,8 +11,10 @@
         android:id="@+id/textTitulo"
         android:layout_width="178dp"
         android:layout_height="37dp"
-        android:layout_marginStart="108dp"
+        android:layout_marginStart="92dp"
         android:layout_marginTop="16dp"
+        android:textAlignment="center"
+        android:textSize="27sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

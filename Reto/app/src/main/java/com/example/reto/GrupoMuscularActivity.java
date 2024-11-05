@@ -3,6 +3,7 @@ package com.example.reto;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -12,6 +13,7 @@ import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,6 +35,7 @@ public class GrupoMuscularActivity extends AppCompatActivity {
     private List<String> grupos;
     private DBAccesible dao;
     private final int main = 1;
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +54,7 @@ public class GrupoMuscularActivity extends AppCompatActivity {
         if (intent.hasExtra("GRUPO")) {
             grupo = intent.getStringExtra("GRUPO");
         } else {
-            grupo = "";  // O maneja el caso de ausencia de datos
+            grupo = "";
         }
 
         tit = (TextView) findViewById(R.id.textTitulo);
@@ -85,7 +88,7 @@ public class GrupoMuscularActivity extends AppCompatActivity {
         cbGrupo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                ejercicios = dao.getEjerciciosGrupoMuscular(cbGrupo.getSelectedItem().toString());
+                grupo = cbGrupo.getSelectedItem().toString();
                 cargarTabla();
                 tit.setText(cbGrupo.getSelectedItem().toString());
             }
@@ -97,40 +100,51 @@ public class GrupoMuscularActivity extends AppCompatActivity {
         });
 
         tabla = (TableLayout) findViewById(R.id.tablaEjer);
-        ejercicios = dao.getEjerciciosGrupoMuscular(grupo);
+
         cargarTabla();
     }
 
     private void cargarCombo() {
-
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, grupos);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         cbGrupo.setAdapter(adapter);
     }
 
     private void cargarTabla() {
-        //limpiar los datos de la tabla
+        ejercicios = dao.getEjerciciosGrupoMuscular(grupo);
+        // Limpiar los datos de la tabla
         tabla.removeAllViews();
-        for(Map.Entry<String, Ejercicio> ejer : ejercicios.entrySet()){
-            //creamos una fila
-            TableRow row = new TableRow(this);
 
-            //crear la imagen para ponerla en la primera columna
-            ImageView imgEjer = new ImageView(this);
+        if (ejercicios.isEmpty()) {
+            Toast.makeText(this, R.string.txtNoHayEjercicios, Toast.LENGTH_SHORT).show();
+        } else {
+            for (Map.Entry<String, Ejercicio> ejer : ejercicios.entrySet()) {
+                // Crear una fila
+                TableRow row = new TableRow(this);
+                row.setLayoutParams(new TableRow.LayoutParams(
+                        TableRow.LayoutParams.MATCH_PARENT,
+                        TableRow.LayoutParams.WRAP_CONTENT
+                ));
 
+                // Crear y rellenar la columna de nombre
+                TextView txtNombre = new TextView(this);
+                txtNombre.setText(ejer.getValue().getNombre());
+                txtNombre.setPadding(160, 160, 160, 160); // Padding para hacer más grande la celda
+                txtNombre.setGravity(Gravity.CENTER); // Centrar el texto
+                txtNombre.setTextSize(25);
+                row.addView(txtNombre);
 
-            //creamos y rellenamos la columna de nombre
-            TextView txtNombre = new TextView(this);
-            txtNombre.setText(ejer.getValue().getNombre());
-            row.addView(txtNombre);
+                // Crear y rellenar la columna de series y repeticiones
+                TextView txtSeries = new TextView(this);
+                txtSeries.setText(ejer.getValue().getSeries() + " x " + ejer.getValue().getRepeticiones());
+                txtSeries.setPadding(160, 160, 160, 160); // Padding para hacer más grande la celda
+                txtSeries.setGravity(Gravity.CENTER); // Centrar el texto
+                txtSeries.setTextSize(25);
+                row.addView(txtSeries);
 
-            //creamos y rellenamos la columna de sries y repeticiones
-            TextView txtSeries = new TextView(this);
-            txtSeries.setText(ejer.getValue().getSeries()+" x "+ejer.getValue().getRepeticiones());
-            row.addView(txtSeries);
-
-            // Agregar la fila al TableLayout
-            tabla.addView(row);
+                // Agregar la fila al TableLayout
+                tabla.addView(row);
+            }
         }
     }
 }
