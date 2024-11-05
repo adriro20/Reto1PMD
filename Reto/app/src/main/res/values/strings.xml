@@ -12,6 +12,7 @@
     <string name="txtSeries">Series</string>
     <string name="txtDescripcion">Descripción</string>
     <string name="txtCrear">Añadir ejercicio</string>
+    <string name="txtSelecciona">Elige un grupo</string>
     <string name="txtErrorInsert">Error al insertar los datos</string>
     <string name="txtErrorSelect">Error al recoger los datos</string>
     <string name="txtErrorCrearBD">Error al abrir/crear la base de datos</string>
