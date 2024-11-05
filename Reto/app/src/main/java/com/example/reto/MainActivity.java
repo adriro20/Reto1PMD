@@ -19,6 +19,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,13 +29,14 @@ public class MainActivity extends AppCompatActivity {
     Button btnAnadir = null;
     Button btnVer = null;
     Spinner comboGrupoMusc = null;
-    private List<String> grupos;
+    private List<String> grupos = new ArrayList<>();
     private DBAccesible dao;
     TableLayout tablaEjercicios = null;
     private Map<String, Ejercicio> ejercicios = new HashMap<>();
     private String grupoSeleccionado;
     private final int anadirActivity = 1;
     private final int grupoActivity = 2;
+    List<String> nombreGrupos = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,13 +60,16 @@ public class MainActivity extends AppCompatActivity {
         btnVer = (Button) findViewById(R.id.btnVer);
         btnVer.setOnClickListener(this::irAGrupo);
 
+        tablaEjercicios = (TableLayout) findViewById(R.id.tablaEjercicios);
+
         comboGrupoMusc = (Spinner) findViewById(R.id.comboGrupoMusc);
         cargarDatosEnCombo();
         comboGrupoMusc.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 //cargarTabla();
-                grupoSeleccionado = comboGrupoMusc.getSelectedItem().toString();
+
+                cargarTabla();
             }
 
             @Override
@@ -72,9 +77,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-        tablaEjercicios = (TableLayout) findViewById(R.id.tablaEjercicios);
-
     }
 
     private void cargarTabla() {
@@ -115,18 +117,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void irAGrupo(View view) {
-        if (grupoSeleccionado != null && !grupoSeleccionado.isEmpty()) {
+        grupoSeleccionado = comboGrupoMusc.getSelectedItem().toString();
+        if (grupoSeleccionado == "" && !grupoSeleccionado.isEmpty()) {
             Intent intent = new Intent(MainActivity.this, GrupoMuscularActivity.class);
             intent.putExtra("GRUPO", grupoSeleccionado);
             startActivityForResult(intent, grupoActivity);
         }else{
-            Toast.makeText(this, "Seleccione un grupo muscular", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.txtSelecciona, Toast.LENGTH_SHORT).show();
         }
 
     }
 
     private void cargarDatosEnCombo() {
-        grupos = dao.getGrupos();
+        nombreGrupos = dao.getGrupos();
+        grupos.add((String) getText(R.string.txtSelecciona).toString());
+        grupos.addAll(nombreGrupos);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, grupos);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         comboGrupoMusc.setAdapter(adapter);
