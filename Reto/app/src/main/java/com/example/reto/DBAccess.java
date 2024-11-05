@@ -105,7 +105,6 @@ public class DBAccess implements DBAccesible {
                 ejer.getVideo(),
                 ejer.getAudio()
         });
-
     }
 
     private Integer getIdGrupo(String grupo){
