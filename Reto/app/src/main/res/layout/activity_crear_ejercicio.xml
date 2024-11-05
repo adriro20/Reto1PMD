@@ -5,182 +5,198 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/imgfondo"
     tools:context=".CrearEjercicioActivity">
 
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="228dp"
-        android:text="@string/txtCrear"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <Button
-        android:id="@+id/btnVolver"
+        android:id="@+id/btnCrear"
+        android:layout_width="181dp"
+        android:layout_height="41dp"
+        android:text="@string/txtCrear"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ibVideo" />
+
+    <ImageButton
+        android:id="@+id/ibVideo"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toStartOf="@+id/ibAudio"
+        app:layout_constraintHorizontal_bias="0.509"
+        app:layout_constraintStart_toEndOf="@+id/ibImagen"
+        app:layout_constraintTop_toBottomOf="@+id/etDescripcion"
+        app:srcCompat="@drawable/iconovideo" />
+
+    <ImageButton
+        android:id="@+id/ibImagen"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginStart="28dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/ibVideo"
+        app:srcCompat="@drawable/iconoimagen" />
+
+    <ImageButton
+        android:id="@+id/ibAudio"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginEnd="32dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/ibVideo"
+        app:srcCompat="@drawable/iconoaudio" />
+
+    <Spinner
+        android:id="@+id/cbGrupo"
+        android:layout_width="280dp"
+        android:layout_height="50dp"
+        android:textColor="@android:color/white"
+        app:layout_constraintEnd_toEndOf="@+id/etNombre"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/textView15"
+        app:layout_constraintTop_toBottomOf="@+id/textView15" />
+
+    <TextView
+        android:id="@+id/textView15"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="120dp"
-        android:text="@string/txtVolver"
+        android:layout_marginTop="20dp"
+        android:text="@string/txtGrupo"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="@+id/etNombre"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/textView11"
+        app:layout_constraintTop_toBottomOf="@+id/etNombre" />
+
+    <EditText
+        android:id="@+id/etDescripcion"
+        android:layout_width="280dp"
+        android:layout_height="150dp"
+        android:ems="10"
+        android:inputType="textMultiLine"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/textView14"
+        app:layout_constraintTop_toBottomOf="@+id/textView14" />
+
+    <TextView
+        android:id="@+id/textView14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/txtDescripcion"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/etSeries"
+        app:layout_constraintTop_toBottomOf="@+id/etSeries" />
+
+    <EditText
+        android:id="@+id/etRepeticiones"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:digits="0123456789"
+        android:ems="10"
+        android:inputType="number"
+        android:textColor="@color/white"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/textView13"
+        app:layout_constraintTop_toBottomOf="@+id/textView13" />
+
+    <TextView
+        android:id="@+id/textView13"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/txtRepeticiones"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="@+id/cbGrupo"
+        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintStart_toStartOf="@+id/cbGrupo"
+        app:layout_constraintTop_toBottomOf="@+id/cbGrupo" />
+
+    <EditText
+        android:id="@+id/etNombre"
+        android:layout_width="280dp"
+        android:layout_height="50dp"
+        android:ems="10"
+        android:inputType="text"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView11" />
+
+    <EditText
+        android:id="@+id/etSeries"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:digits="0123456789"
+        android:ems="10"
+        android:inputType="number"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toStartOf="@+id/etRepeticiones"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/textView12"
+        app:layout_constraintTop_toBottomOf="@+id/textView12" />
+
+    <TextView
+        android:id="@+id/textView12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/txtSeries"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/cbGrupo"
+        app:layout_constraintTop_toBottomOf="@+id/cbGrupo" />
+
+    <TextView
+        android:id="@+id/textView11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:text="@string/txtNombre"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toStartOf="@+id/etNombre"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btnSalir"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
         android:text="@string/txtSalir"
+        app:layout_constraintBottom_toBottomOf="@+id/btnVolver"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="288dp"
-        android:layout_marginEnd="260dp"
-        android:text="@string/txtDescripcion"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="204dp"
-        android:layout_marginEnd="356dp"
-        android:text="@string/txtSeries"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/etNombre"
-        android:layout_width="185dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="140dp"
-        android:layout_marginEnd="208dp"
-        android:ems="10"
-        android:inputType="text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/etRepeticiones"
-        android:layout_width="83dp"
-        android:layout_height="32dp"
-        android:layout_marginTop="228dp"
-        android:layout_marginEnd="216dp"
-        android:ems="10"
-        android:inputType="number"
-        android:digits="0123456789"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="116dp"
-        android:layout_marginEnd="340dp"
-        android:text="@string/txtNombre"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/etSeries"
-        android:layout_width="83dp"
-        android:layout_height="32dp"
-        android:layout_marginTop="228dp"
-        android:layout_marginEnd="312dp"
-        android:ems="10"
-        android:inputType="number"
-        android:digits="0123456789"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/etDescripcion"
-        android:layout_width="265dp"
-        android:layout_height="211dp"
-        android:layout_marginTop="308dp"
-        android:layout_marginEnd="72dp"
-        android:ems="10"
-        android:inputType="textMultiLine"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="204dp"
-        android:layout_marginEnd="216dp"
-        android:text="@string/txtRepeticiones"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="116dp"
-        android:layout_marginEnd="88dp"
-        android:text="@string/txtGrupo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageButton
-        android:id="@+id/ibImagen"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="528dp"
-        android:layout_marginEnd="268dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/iconoimagen" />
-
-    <ImageButton
-        android:id="@+id/ibVideo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="528dp"
-        android:layout_marginEnd="144dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/iconovideo" />
-
-    <ImageButton
-        android:id="@+id/ibAudio"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="528dp"
-        android:layout_marginEnd="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/iconoaudio" />
+        app:layout_constraintStart_toEndOf="@+id/btnVolver"
+        app:layout_constraintTop_toTopOf="@+id/btnVolver" />
 
     <Button
-        android:id="@+id/btnCrear"
-        android:layout_width="181dp"
-        android:layout_height="41dp"
-        android:layout_marginTop="660dp"
-        android:layout_marginEnd="116dp"
-        android:text="@string/txtCrear"
+        android:id="@+id/btnVolver"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="120dp"
+        android:text="@string/txtVolver"
+        app:layout_constraintBottom_toBottomOf="@+id/textView7"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/textView7"
+        app:layout_constraintTop_toTopOf="@+id/textView7"
+        app:layout_constraintVertical_bias="0.482" />
 
-    <Spinner
-        android:id="@+id/cbGrupo"
-        android:layout_width="160dp"
-        android:layout_height="37dp"
-        android:layout_marginTop="140dp"
-        android:layout_marginEnd="24dp"
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/txtCrear"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/etNombre"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.15"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
