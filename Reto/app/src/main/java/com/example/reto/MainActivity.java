@@ -1,5 +1,7 @@
 package com.example.reto;
 
+
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -23,17 +25,18 @@ import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-    Button btnSalir = null;
-    Button btnAnadir = null;
-    Button btnVer = null;
-    Spinner comboGrupoMusc = null;
+    private Button btnSalir = null;
+    private Button btnAnadir = null;
+    private  Button btnVer = null;
+    private Spinner comboGrupoMusc = null;
     private List<String> grupos;
-    private DBAccesible dao;
-    TableLayout tablaEjercicios = null;
+
+    private TableLayout tablaEjercicios = null;
     private Map<String, Ejercicio> ejercicios = new HashMap<>();
     private final int anadirActivity = 1;
     private final int grupoActivity = 2;
 
+    private DBAccesible dao;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        dao = new DBAccess(this);
 
         btnSalir = (Button) findViewById(R.id.btnSalir);
         btnSalir.setOnClickListener(this::cerrarApp);
@@ -56,10 +61,11 @@ public class MainActivity extends AppCompatActivity {
 
         comboGrupoMusc = (Spinner) findViewById(R.id.comboGrupoMusc);
         cargarDatosEnCombo();
-        comboGrupoMusc.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+       comboGrupoMusc.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                cargarTabla();
+               cargarTabla();
             }
 
             @Override
@@ -75,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
     private void cargarTabla() {
         //limpiar los datos de la tabla
         tablaEjercicios.removeAllViews();
-        String grupo = (String) comboGrupoMusc.getSelectedItem();
+        Integer grupo = comboGrupoMusc.getSelectedItemPosition();
         ejercicios = dao.getEjerciciosGrupoMuscular(grupo);
         for(Map.Entry<String, Ejercicio> ejer : ejercicios.entrySet()){
             //creamos una fila
@@ -111,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void irAGrupo(View view) {
         Intent intent = new Intent(MainActivity.this, GrupoMuscularActivity.class);
-        intent.putExtra("GRUPO", ((String)comboGrupoMusc.getSelectedItem()));
+        intent.putExtra("GRUPO", (comboGrupoMusc.getSelectedItemPosition()));
         startActivityForResult(intent, grupoActivity);
     }
 

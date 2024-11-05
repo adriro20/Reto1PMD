@@ -42,7 +42,8 @@ public class GrupoMuscularActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.grupo_muscular_arctivity);
-
+        dao = new DBAccess(this);
+        
         //coger los datos que nos pasan desde la otra ventana
         Intent intent = getIntent();
         grupo = Integer.parseInt(intent.getExtras().getString("GRUPO"));
