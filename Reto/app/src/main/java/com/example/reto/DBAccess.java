@@ -20,10 +20,9 @@ public class DBAccess implements DBAccesible {
     private String selectIdGrupo = "SELECT id FROM grupo WHERE nombre = ?";
     private String selectNombreGrupo = "SELECT nombre FROM grupo WHERE id = ?";
     private String selectGrupos = "SELECT nombre FROM grupo";
-    private String selectEjercicioPorGrupo = "SELECT * FROM ejercicio WHERE idGrupo = ?";
+    private String selectEjercicioPorGrupo = "SELECT * FROM ejercicio WHERE nombre = ?";
     private String insertGrupos = "INSERT INTO grupo(nombre) VALUES ('brazo'),('pierna'),('pecho'),('espalda')";
     private String insertEjercicio = "INSERT INTO ejercicio (nombre, idGrupo, descripcion, repeticiones, series, imagen, video, audio) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-
     private Context context;
 
     public DBAccess(Context context) {
@@ -32,11 +31,23 @@ public class DBAccess implements DBAccesible {
             dataBase = context.openOrCreateDatabase("BDEjercicios", Context.MODE_PRIVATE, null);
             dataBase.execSQL(crearTablaGrupo);
             dataBase.execSQL(crearTablaEjercicio);
-            dataBase.execSQL(insertGrupos);
+            if(!HayGrupos())
+                dataBase.execSQL(insertGrupos);
 
         } catch (SQLiteException e) {
             Toast.makeText(context, R.string.txtErrorCrearBD, Toast.LENGTH_LONG).show();
         }
+    }
+
+    private boolean HayGrupos() {
+        Cursor cursor = null;
+        cursor = dataBase.rawQuery(selectGrupos, null);
+        if(cursor.getCount() == 0){
+            return false;
+        }else{
+            return true;
+        }
+
     }
 
     @Override
@@ -63,11 +74,11 @@ public class DBAccess implements DBAccesible {
     }
 
     @Override
-    public Map<String, Ejercicio> getEjerciciosGrupoMuscular(Integer id){
+    public Map<String, Ejercicio> getEjerciciosGrupoMuscular(String nombre){
         Map<String, Ejercicio> ejercicios = new HashMap<>();
         Cursor cursor = null;
         try{
-            cursor = dataBase.rawQuery(selectEjercicioPorGrupo, new String[]{String.valueOf(id)});
+            cursor = dataBase.rawQuery(selectEjercicioPorGrupo, new String[]{nombre});
             if(cursor.getCount() != 0){
                 while(cursor.moveToNext()){
                     Ejercicio ejer = new Ejercicio();
@@ -105,6 +116,7 @@ public class DBAccess implements DBAccesible {
                 ejer.getVideo(),
                 ejer.getAudio()
         });
+
     }
 
     private Integer getIdGrupo(String grupo){
@@ -128,8 +140,8 @@ public class DBAccess implements DBAccesible {
         return id;
     }
 
-    @Override
-    public String getNombreGrupo(Integer id){
+
+    private String getNombreGrupo(Integer id){
         String nombre = null;
         Cursor cursor = null;
         try{

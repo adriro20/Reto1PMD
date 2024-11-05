@@ -8,12 +8,9 @@ import java.util.HashMap;
 
 public interface DBAccesible {
 
-    public Map<String, Ejercicio> getEjerciciosGrupoMuscular(Integer id);
+    public Map<String, Ejercicio> getEjerciciosGrupoMuscular(String nombre);
 
     public List<String> getGrupos();
 
     public void setEjercicio(Ejercicio ejer);
-
-    public String getNombreGrupo(Integer id);
-
 }
