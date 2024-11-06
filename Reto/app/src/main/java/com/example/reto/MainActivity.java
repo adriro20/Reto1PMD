@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void irAGrupo(View view) {
         grupoSeleccionado = comboGrupoMusc.getSelectedItem().toString();
-        if (grupoSeleccionado == "" && !grupoSeleccionado.isEmpty()) {
+        if (grupoSeleccionado == "" || !grupoSeleccionado.isEmpty()) {
             Intent intent = new Intent(MainActivity.this, GrupoMuscularActivity.class);
             intent.putExtra("GRUPO", grupoSeleccionado);
             startActivityForResult(intent, grupoActivity);
