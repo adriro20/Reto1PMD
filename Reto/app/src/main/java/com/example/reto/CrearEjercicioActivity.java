@@ -57,6 +57,7 @@ public class CrearEjercicioActivity extends AppCompatActivity {
     
     private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final int REQUEST_AUDIO_PERMISSION = 2;
+    private static final int REQUEST_CAMERA_AND_AUDIO_PERMISSION = 3;
     private static final int CAPTURA_IMAGEN = 101;
     private static final int CAPTURA_VIDEO = 102;
     private static final int CAPTURA_AUDIO = 103;
@@ -103,9 +104,49 @@ public class CrearEjercicioActivity extends AppCompatActivity {
         ibAudio = findViewById(R.id.ibAudio);
         ibAudio.setOnClickListener(this::subirAudio);
 
-        solicitarPermisosCamara();
-        solicitarPermisosAudio();
+        solicitarPermisos();
 
+    }
+
+    private void solicitarPermisos() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+
+            // Solicita ambos permisos en una sola llamada
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO},
+                    REQUEST_CAMERA_AND_AUDIO_PERMISSION);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_CAMERA_AND_AUDIO_PERMISSION) {
+            boolean cameraPermissionGranted = false;
+            boolean audioPermissionGranted = false;
+
+            // Revisa los resultados de ambos permisos
+            for (int i = 0; i < permissions.length; i++) {
+                if (permissions[i].equals(Manifest.permission.CAMERA)) {
+                    cameraPermissionGranted = grantResults[i] == PackageManager.PERMISSION_GRANTED;
+                } else if (permissions[i].equals(Manifest.permission.RECORD_AUDIO)) {
+                    audioPermissionGranted = grantResults[i] == PackageManager.PERMISSION_GRANTED;
+                }
+            }
+
+            if (cameraPermissionGranted && audioPermissionGranted) {
+                // Ambos permisos fueron concedidos
+                Toast.makeText(this, "Permisos de cámara y audio concedidos", Toast.LENGTH_SHORT).show();
+            } else {
+                // Al menos uno de los permisos fue denegado
+                Toast.makeText(this, "Sin aceptar los permisos no se puede crear un ejercicio", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent();
+                setResult(RESULT_CANCELED, intent);
+                finish();
+            }
+        }
     }
 
     private void subirAudio(View view) {
@@ -150,17 +191,6 @@ public class CrearEjercicioActivity extends AppCompatActivity {
         }
     }
 
-    private void solicitarPermisosCamara() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
-        }
-    }
-
-    private void solicitarPermisosAudio(){
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_AUDIO_PERMISSION);
-        }
-    }
 
     private void abrirCamara(String queHacer) {
         if(queHacer.equals("IMAGEN")){
@@ -195,31 +225,6 @@ public class CrearEjercicioActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_CAMERA_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Permiso de cámara aceptado", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Sin aceptar los permisos no se puede crear un ejercicio", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent();
-                setResult(RESULT_CANCELED, intent);
-                finish();
-            }
-        }
-        if (requestCode == REQUEST_AUDIO_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Permiso de audio aceptado", Toast.LENGTH_SHORT).show();
-            } else {
-                // Permiso denegado, muestra un mensaje
-                Toast.makeText(this, "Sin aceptar los permisos no se puede crear un ejercicio", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent();
-                setResult(RESULT_CANCELED, intent);
-                finish();
-            }
-        }
-    }
 
     private void crearEjercicio(View view) {
         ejercicio = new Ejercicio();
