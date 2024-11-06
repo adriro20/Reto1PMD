@@ -2,6 +2,7 @@ package com.example.reto;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -56,7 +57,7 @@ public class GrupoMuscularActivity extends AppCompatActivity {
         } else {
             grupo = "";
         }
-
+        ejercicios = dao.getEjerciciosGrupoMuscular(grupo);
         tit = (TextView) findViewById(R.id.textTitulo);
         tit.setText(grupo);
 
@@ -111,9 +112,15 @@ public class GrupoMuscularActivity extends AppCompatActivity {
     }
 
     private void cargarTabla() {
+        ejercicios.clear();
         ejercicios = dao.getEjerciciosGrupoMuscular(grupo);
-        // Limpiar los datos de la tabla
-        tabla.removeAllViews();
+        // Limpiar los datos de la tabla y dejar el encabezado
+        int rowCount = tabla.getChildCount();
+        if (rowCount > 1) {
+            for (int i = 1; i < rowCount; i++) {
+                tabla.removeViewAt(1);
+            }
+        }
 
         if (ejercicios.isEmpty()) {
             Toast.makeText(this, R.string.txtNoHayEjercicios, Toast.LENGTH_SHORT).show();
@@ -126,20 +133,25 @@ public class GrupoMuscularActivity extends AppCompatActivity {
                         TableRow.LayoutParams.WRAP_CONTENT
                 ));
 
+
                 // Crear y rellenar la columna de nombre
                 TextView txtNombre = new TextView(this);
                 txtNombre.setText(ejer.getValue().getNombre());
-                txtNombre.setPadding(160, 160, 160, 160); // Padding para hacer más grande la celda
+                txtNombre.setHeight(150);
+                txtNombre.setWidth(120);
                 txtNombre.setGravity(Gravity.CENTER); // Centrar el texto
-                txtNombre.setTextSize(25);
+                txtNombre.setBackgroundResource(R.drawable.cell_border);
+                txtNombre.setTextSize(18);
                 row.addView(txtNombre);
 
                 // Crear y rellenar la columna de series y repeticiones
                 TextView txtSeries = new TextView(this);
                 txtSeries.setText(ejer.getValue().getSeries() + " x " + ejer.getValue().getRepeticiones());
-                txtSeries.setPadding(160, 160, 160, 160); // Padding para hacer más grande la celda
-                txtSeries.setGravity(Gravity.CENTER); // Centrar el texto
-                txtSeries.setTextSize(25);
+                txtSeries.setHeight(150);
+                txtSeries.setWidth(120);
+                txtSeries.setGravity(Gravity.CENTER);
+                txtSeries.setBackgroundResource(R.drawable.cell_border);
+                txtSeries.setTextSize(18);
                 row.addView(txtSeries);
 
                 // Agregar la fila al TableLayout
