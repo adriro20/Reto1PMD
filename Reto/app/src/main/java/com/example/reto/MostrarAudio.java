@@ -53,9 +53,9 @@ public class MostrarAudio extends AppCompatActivity {
         vvAudio.setMediaController(mediaController);
         mediaController.setAnchorView(vvAudio);
 
-        File archivoVideo = new File(getFilesDir(), "Audios/" + audio);
+        File archivoVideo = new File(getFilesDir(), "AUDIOS/" + audio);
         if (archivoVideo.exists()) {
-            Uri.fromFile(archivoVideo);
+            vvAudio.setVideoURI(Uri.fromFile(archivoVideo));
 
             vvAudio.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override

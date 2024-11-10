@@ -53,9 +53,9 @@ public class MostrarVideo extends AppCompatActivity {
         vvVideo.setMediaController(mediaController);
         mediaController.setAnchorView(vvVideo);
 
-        File archivoVideo = new File(getFilesDir(), "Videos/" + video);
+        File archivoVideo = new File(getFilesDir(), "VIDEOS/" + video);
         if (archivoVideo.exists()) {
-            Uri.fromFile(archivoVideo);
+            vvVideo.setVideoURI(Uri.fromFile(archivoVideo));
 
             vvVideo.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
