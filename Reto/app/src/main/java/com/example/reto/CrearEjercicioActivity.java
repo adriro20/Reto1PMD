@@ -24,6 +24,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +48,8 @@ public class CrearEjercicioActivity extends AppCompatActivity {
     private ImageButton ibVideo;
     private ImageButton ibAudio;
 
-    private List<String> grupos;
+    private List<String> nombreGrupos = null;
+    private List<String> grupos = new ArrayList<>();
 
     private Boolean imgOK = false;
     private Boolean vidOK = false;
@@ -81,10 +83,6 @@ public class CrearEjercicioActivity extends AppCompatActivity {
         etDescripcion = findViewById(R.id.etDescripcion);
 
         cbGrupo = findViewById(R.id.cbGrupo);
-        grupos = dao.getGrupos();
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, grupos);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        cbGrupo.setAdapter(adapter);
 
         btnSalir = findViewById(R.id.btnSalir);
         btnSalir.setOnClickListener(this::cerrarApp);
@@ -104,8 +102,19 @@ public class CrearEjercicioActivity extends AppCompatActivity {
         ibAudio = findViewById(R.id.ibAudio);
         ibAudio.setOnClickListener(this::subirAudio);
 
-        solicitarPermisos();
+        cargarDatosEnCombo();
 
+        solicitarPermisos();
+        
+    }
+
+    private void cargarDatosEnCombo() {
+        nombreGrupos = dao.getGrupos();
+        grupos.add((String) getText(R.string.txtSelecciona).toString());
+        grupos.addAll(nombreGrupos);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, grupos);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        cbGrupo.setAdapter(adapter);
     }
 
     private void solicitarPermisos() {
@@ -119,35 +128,6 @@ public class CrearEjercicioActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == REQUEST_CAMERA_AND_AUDIO_PERMISSION) {
-            boolean cameraPermissionGranted = false;
-            boolean audioPermissionGranted = false;
-
-            // Revisa los resultados de ambos permisos
-            for (int i = 0; i < permissions.length; i++) {
-                if (permissions[i].equals(Manifest.permission.CAMERA)) {
-                    cameraPermissionGranted = grantResults[i] == PackageManager.PERMISSION_GRANTED;
-                } else if (permissions[i].equals(Manifest.permission.RECORD_AUDIO)) {
-                    audioPermissionGranted = grantResults[i] == PackageManager.PERMISSION_GRANTED;
-                }
-            }
-
-            if (cameraPermissionGranted && audioPermissionGranted) {
-                // Ambos permisos fueron concedidos
-                Toast.makeText(this, "Permisos de cámara y audio concedidos", Toast.LENGTH_SHORT).show();
-            } else {
-                // Al menos uno de los permisos fue denegado
-                Toast.makeText(this, "Sin aceptar los permisos no se puede crear un ejercicio", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent();
-                setResult(RESULT_CANCELED, intent);
-                finish();
-            }
-        }
-    }
 
     private void subirAudio(View view) {
         if(etNombre.getText().toString().isEmpty()){
@@ -178,36 +158,6 @@ public class CrearEjercicioActivity extends AppCompatActivity {
             Toast.makeText(this, "Primero introduce el nombre del ejercicio" ,
                     Toast.LENGTH_SHORT).show();
         }else{
-            abrirCamara("VIDEO");
-        }
-    }
-
-    public void subirImagen(View view) {
-        if (etNombre.getText().toString().isEmpty()) {
-            Toast.makeText(this, "Primero introduce el nombre del ejercicio",
-                    Toast.LENGTH_SHORT).show();
-        } else {
-            abrirCamara("IMAGEN");
-        }
-    }
-
-
-    private void abrirCamara(String queHacer) {
-        if(queHacer.equals("IMAGEN")){
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            String nombreArchivo = "IMG_" + etNombre.getText().toString() + ".jpg";
-
-            File directorio = new File(getFilesDir(), "Imagenes");
-            if (!directorio.exists()) {
-                directorio.mkdirs(); // Crea el directorio si no existe
-            }
-
-            File imagen = new File(directorio, nombreArchivo);
-            Uri uriImagen = FileProvider.getUriForFile(this, "com.example.reto.fileprovider", imagen);
-
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, uriImagen);
-            startActivityForResult(intent, CAPTURA_IMAGEN);
-        }else{
             Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
             String nombreArchivo = "VID_" + etNombre.getText().toString() + ".mp4";
 
@@ -222,13 +172,43 @@ public class CrearEjercicioActivity extends AppCompatActivity {
             intent.putExtra(MediaStore.EXTRA_OUTPUT, uriVideo);
             startActivityForResult(intent, CAPTURA_VIDEO);
         }
+    }
 
+    public void subirImagen(View view) {
+        if (etNombre.getText().toString().isEmpty()) {
+            Toast.makeText(this, "Primero introduce el nombre del ejercicio",
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            String nombreArchivo = "IMG_" + etNombre.getText().toString() + ".jpg";
+
+            File directorio = new File(getFilesDir(), "Imagenes");
+            if (!directorio.exists()) {
+                directorio.mkdirs(); // Crea el directorio si no existe
+            }
+
+            File imagen = new File(directorio, nombreArchivo);
+            Uri uriImagen = FileProvider.getUriForFile(this, "com.example.reto.fileprovider", imagen);
+
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, uriImagen);
+            startActivityForResult(intent, CAPTURA_IMAGEN);
+        }
     }
 
 
+    private void cerrarApp(View view) {
+        finishAffinity();
+    }
+
+    private void volverAtras(View view){
+        Intent intent = new Intent();
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
     private void crearEjercicio(View view) {
         ejercicio = new Ejercicio();
-        if(etNombre.getText().toString().isEmpty() || cbGrupo.getSelectedItem().equals(-1)
+        if(etNombre.getText().toString().isEmpty() || cbGrupo.getSelectedItem().equals(0)
                 || etSeries.getText().toString().isEmpty() || etRepeticiones.getText().toString().isEmpty()
                 || etDescripcion.getText().toString().isEmpty()){
             Toast.makeText(this, "Los campos tienen que estar llenos" ,
@@ -265,14 +245,34 @@ public class CrearEjercicioActivity extends AppCompatActivity {
 
     }
 
-    private void cerrarApp(View view) {
-        finishAffinity();
-    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-    private void volverAtras(View view){
-        Intent intent = new Intent();
-        setResult(RESULT_OK, intent);
-        finish();
+        if (requestCode == REQUEST_CAMERA_AND_AUDIO_PERMISSION) {
+            boolean cameraPermissionGranted = false;
+            boolean audioPermissionGranted = false;
+
+            // Revisa los resultados de ambos permisos
+            for (int i = 0; i < permissions.length; i++) {
+                if (permissions[i].equals(Manifest.permission.CAMERA)) {
+                    cameraPermissionGranted = grantResults[i] == PackageManager.PERMISSION_GRANTED;
+                } else if (permissions[i].equals(Manifest.permission.RECORD_AUDIO)) {
+                    audioPermissionGranted = grantResults[i] == PackageManager.PERMISSION_GRANTED;
+                }
+            }
+
+            if (cameraPermissionGranted && audioPermissionGranted) {
+                // Ambos permisos fueron concedidos
+                Toast.makeText(this, "Permisos de cámara y audio concedidos", Toast.LENGTH_SHORT).show();
+            } else {
+                // Al menos uno de los permisos fue denegado
+                Toast.makeText(this, "Sin aceptar los permisos no se puede crear un ejercicio", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent();
+                setResult(RESULT_CANCELED, intent);
+                finish();
+            }
+        }
     }
 
     @Override
