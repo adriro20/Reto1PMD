@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
                             tablaEjercicios.removeViewAt(1);
                         }
                     }
+                    btnVer.setEnabled(false);
                 }else {
                     cargarTabla(grupo);
                 }
@@ -101,8 +102,10 @@ public class MainActivity extends AppCompatActivity {
         }
         ejercicios = dao.getEjerciciosGrupoMuscular(grupo);
         if (ejercicios.isEmpty()) {
+            btnVer.setEnabled(false);
             Toast.makeText(this, R.string.txtNoHayEjercicios, Toast.LENGTH_SHORT).show();
         } else {
+            btnVer.setEnabled(true);
         for (Map.Entry<String, Ejercicio> ejer : ejercicios.entrySet()) {
             // Crear una fila
             TableRow row = new TableRow(this);

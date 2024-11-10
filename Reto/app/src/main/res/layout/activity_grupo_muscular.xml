@@ -13,6 +13,7 @@
         android:layout_width="178dp"
         android:layout_height="37dp"
         android:layout_marginStart="92dp"
+        android:textColor="@color/white"
         android:layout_marginTop="16dp"
         android:textAlignment="center"
         android:textSize="27sp"
@@ -47,6 +48,8 @@
         android:layout_height="67dp"
         android:layout_marginStart="68dp"
         android:layout_marginTop="144dp"
+        android:background="@color/white"
+        android:alpha="0.7"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -65,12 +68,10 @@
             android:background="#EEEEEE">
 
             <TextView
-
-
                 android:layout_width="135dp"
                 android:layout_height="60dp"
                 android:gravity="center"
-                android:text="imagen"
+                android:text="@string/txtImagen"
                 android:textStyle="bold"
                 android:background="@drawable/cell_border"
                 android:textSize="18sp"
@@ -80,7 +81,7 @@
                 android:layout_width="135dp"
                 android:layout_height="60dp"
                 android:gravity="center"
-                android:text="Nombre"
+                android:text="@string/txtNombre"
                 android:textStyle="bold"
                 android:background="@drawable/cell_border"
                 android:textSize="18sp"
@@ -90,7 +91,7 @@
                 android:layout_width="90dp"
                 android:layout_height="60dp"
                 android:gravity="center"
-                android:text="S x R"
+                android:text="@string/txtSxR"
                 android:textStyle="bold"
                 android:background="@drawable/cell_border"
                 android:textSize="18sp"

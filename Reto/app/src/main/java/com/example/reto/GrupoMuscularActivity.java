@@ -38,6 +38,7 @@ public class GrupoMuscularActivity extends AppCompatActivity {
     private List<String> grupos;
     private DBAccesible dao;
     private final int main = 1;
+    private final int mostrarActivity = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,9 +167,6 @@ public class GrupoMuscularActivity extends AppCompatActivity {
                 txtSeries.setGravity(Gravity.CENTER); // Centrar el texto
                 txtSeries.setTextSize(25);
                 row.addView(txtSeries);
-                // Agregar la fila al TableLayout
-                tabla.addView(row);
-
                 // Agregar el evento de clic a la fila
                 row.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -176,6 +174,11 @@ public class GrupoMuscularActivity extends AppCompatActivity {
                         irVistaEjercicio(ejer.getValue());
                     }
                 });
+
+                // Agregar la fila al TableLayout
+                tabla.addView(row);
+
+
             }
         }
     }
@@ -183,5 +186,6 @@ public class GrupoMuscularActivity extends AppCompatActivity {
     private void irVistaEjercicio(Ejercicio ejercicioSeleccionado) {
         Intent intent = new Intent(GrupoMuscularActivity.this, MostrarEjercicioActivity.class);
         intent.putExtra("EJERCICIO", ejercicioSeleccionado);
+        startActivityForResult(intent, mostrarActivity);
     }
 }
