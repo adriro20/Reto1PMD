@@ -3,6 +3,7 @@ package com.example.reto;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -36,6 +37,10 @@ public class CrearEjercicioActivity extends AppCompatActivity {
 
     private Ejercicio ejercicio;
 
+    private boolean grabando = false;
+
+    private MediaRecorder recorder;
+
     private EditText etNombre;
     private EditText etSeries;
     private EditText etRepeticiones;
@@ -49,7 +54,8 @@ public class CrearEjercicioActivity extends AppCompatActivity {
 
     private ImageButton ibImagen;
     private ImageButton ibVideo;
-    private ImageButton ibAudio;
+
+    private Button btnAudio;
 
     private List<String> nombreGrupos = null;
     private List<String> grupos = new ArrayList<>();
@@ -64,6 +70,8 @@ public class CrearEjercicioActivity extends AppCompatActivity {
 
     private Uri uriVideoTemporal;
     private Uri uriAudioTemporal;
+
+    private File archivoAudioTemporal;
 
     private static final int PEDIR_PERMISOS_AUDIO_Y_CAMARA = 3;
     private static final int CAPTURA_IMAGEN = 101;
@@ -105,8 +113,8 @@ public class CrearEjercicioActivity extends AppCompatActivity {
         ibVideo = findViewById(R.id.ibVideo);
         ibVideo.setOnClickListener(this::subirVideo);
 
-        ibAudio = findViewById(R.id.ibAudio);
-        ibAudio.setOnClickListener(this::subirAudio);
+        btnAudio = findViewById(R.id.btnAudio);
+        btnAudio.setOnClickListener(this::subirAudio);
 
         cargarDatosEnCombo();
 
@@ -135,29 +143,7 @@ public class CrearEjercicioActivity extends AppCompatActivity {
     }
 
 
-    private void subirAudio(View view) {
-        if(etNombre.getText().toString().isEmpty()){
-            Toast.makeText(this, "Primero introduce el nombre del ejercicio" ,
-                    Toast.LENGTH_SHORT).show();
-        }else{
-            Intent intent = new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION);
-            if (intent.resolveActivity(getPackageManager()) == null) {
-                Toast.makeText(this, "No hay una aplicación de grabación de audio disponible", Toast.LENGTH_SHORT).show();
-            } else {
-                String nombreArchivo = "AUD_"+etNombre.getText().toString() + ".mp3";
-                File directorio = new File(getFilesDir(), "Audios");
-                if (!directorio.exists()) {
-                    directorio.mkdirs(); // Crea el directorio si no existe
-                }
 
-                File audio = new File(directorio, nombreArchivo);
-                Uri uriAudio = FileProvider.getUriForFile(this, "com.example.reto.fileprovider", audio);
-
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, uriAudio);
-                startActivityForResult(intent, CAPTURA_AUDIO);
-            }
-        }
-    }
 
     private void subirVideo(View view) {
         if(etNombre.getText().toString().isEmpty()){
@@ -177,6 +163,39 @@ public class CrearEjercicioActivity extends AppCompatActivity {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             startActivityForResult(intent, CAPTURA_IMAGEN);
         }
+    }
+
+    private void subirAudio(View view) {
+        if(grabando){
+            btnAudio.setText(R.string.txtGrabarAudio);
+            recorder.stop();
+            recorder.release();
+            recorder = null;
+            grabando = false;
+
+            // Crear URI para el archivo grabado
+            uriAudioTemporal = Uri.fromFile(archivoAudioTemporal);
+
+        }else{
+            btnAudio.setText(R.string.txtPararAudio);
+            try {
+                archivoAudioTemporal = File.createTempFile("audio", ".mp3", getCacheDir());
+                recorder = new MediaRecorder();
+                recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+                recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+                recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+                recorder.setOutputFile(archivoAudioTemporal.getAbsolutePath());
+                recorder.prepare();
+                recorder.start();
+                grabando = true;
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Ha sucedido un error con el audio", Toast.LENGTH_SHORT).show();
+                btnAudio.setText(R.string.txtGrabarAudio);
+            }
+
+        }
+
     }
 
 
@@ -220,6 +239,7 @@ public class CrearEjercicioActivity extends AppCompatActivity {
                 }
                 if(audOK){
                     ejercicio.setAudio("AUD_"+etNombre.getText().toString());
+                    guardarAudio();
                 }
 
                 dao.setEjercicio(ejercicio);
@@ -236,61 +256,108 @@ public class CrearEjercicioActivity extends AppCompatActivity {
 
     }
 
-    private void guardarVideo() {
-        if (uriVideoTemporal != null) {
-            InputStream inputStream = null;
-            OutputStream outputStream = null;
+    private void guardarAudio() {
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+        try {
+            // Obtener un InputStream desde el URI del video
+            inputStream = getContentResolver().openInputStream(uriAudioTemporal);
+
+            // Crear el archivo de destino en el almacenamiento interno
+            File directory = new File(getFilesDir(), "VIDEOS"); // Crea un directorio llamado "videos"
+            if (!directory.exists()) {
+                directory.mkdirs(); // Si no existe, lo crea
+            }
+
+            // Nombre del archivo de video
+            String videoName = "AUD_" + etNombre.getText().toString() + ".mp3";
+            File outputFile = new File(directory, videoName);
+
+            // Crear un OutputStream para escribir el video en el archivo de destino
+            outputStream = new FileOutputStream(outputFile);
+
+            // Copiar el contenido del InputStream al OutputStream (guardar el video)
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = inputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, length);
+            }
+
+            // Cerrar streams
+            inputStream.close();
+            outputStream.close();
+
+
+            Toast.makeText(this, "Audio guardado correctamente", Toast.LENGTH_SHORT).show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error al guardar el video", Toast.LENGTH_SHORT).show();
+        } finally {
+            // Asegurarse de cerrar los streams si algo falla
             try {
-                // Obtener un InputStream desde el URI del video
-                inputStream = getContentResolver().openInputStream(uriVideoTemporal);
-
-                // Crear el archivo de destino en el almacenamiento interno
-                File directory = new File(getFilesDir(), "videos"); // Crea un directorio llamado "videos"
-                if (!directory.exists()) {
-                    directory.mkdirs(); // Si no existe, lo crea
+                if (inputStream != null) {
+                    inputStream.close();
                 }
-
-                // Nombre del archivo de video
-                String videoName = "VID_" + etNombre.getText().toString() + ".mp4";
-                File outputFile = new File(directory, videoName);
-
-                // Crear un OutputStream para escribir el video en el archivo de destino
-                outputStream = new FileOutputStream(outputFile);
-
-                // Copiar el contenido del InputStream al OutputStream (guardar el video)
-                byte[] buffer = new byte[1024];
-                int length;
-                while ((length = inputStream.read(buffer)) > 0) {
-                    outputStream.write(buffer, 0, length);
+                if (outputStream != null) {
+                    outputStream.close();
                 }
-
-                // Cerrar streams
-                inputStream.close();
-                outputStream.close();
-
-                // Actualizar la URI de video del ejercicio
-                ejercicio.setVideo(outputFile.getAbsolutePath());  // Guardar la ruta del archivo en el objeto Ejercicio
-
-                Toast.makeText(this, "Video guardado correctamente", Toast.LENGTH_SHORT).show();
-
             } catch (IOException e) {
                 e.printStackTrace();
-                Toast.makeText(this, "Error al guardar el video", Toast.LENGTH_SHORT).show();
-            } finally {
-                // Asegurarse de cerrar los streams si algo falla
-                try {
-                    if (inputStream != null) {
-                        inputStream.close();
-                    }
-                    if (outputStream != null) {
-                        outputStream.close();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             }
-        } else {
-            Toast.makeText(this, "No se ha seleccionado un video", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+
+    private void guardarVideo() {
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+        try {
+            // Obtener un InputStream desde el URI del video
+            inputStream = getContentResolver().openInputStream(uriVideoTemporal);
+
+            // Crear el archivo de destino en el almacenamiento interno
+            File directory = new File(getFilesDir(), "VIDEOS"); // Crea un directorio llamado "videos"
+            if (!directory.exists()) {
+                directory.mkdirs(); // Si no existe, lo crea
+            }
+
+            // Nombre del archivo de video
+            String videoName = "VID_" + etNombre.getText().toString() + ".mp4";
+            File outputFile = new File(directory, videoName);
+
+            // Crear un OutputStream para escribir el video en el archivo de destino
+            outputStream = new FileOutputStream(outputFile);
+
+            // Copiar el contenido del InputStream al OutputStream (guardar el video)
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = inputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, length);
+            }
+
+            // Cerrar streams
+            inputStream.close();
+            outputStream.close();
+
+            Toast.makeText(this, "Video guardado correctamente", Toast.LENGTH_SHORT).show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error al guardar el video", Toast.LENGTH_SHORT).show();
+        } finally {
+            // Asegurarse de cerrar los streams si algo falla
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -300,7 +367,7 @@ public class CrearEjercicioActivity extends AppCompatActivity {
         String nombreArchivo = "IMG_" + etNombre.getText().toString() + ".jpeg";
 
         // Crear el directorio "Imagenes" en el almacenamiento interno
-        File directorio = new File(getFilesDir(), "Imagenes");
+        File directorio = new File(getFilesDir(), "IMAGENES");
         if (!directorio.exists()) {
             directorio.mkdirs(); // Si el directorio no existe, lo crea
         }

@@ -21,4 +21,6 @@
     <string name="txtErrorCargarImagen">Ha sucedido un error al intentar cargar la imagen</string>
     <string name="txtErrorCargarVideo">Ha sucedido un error al intentar cargar el video</string>
     <string name="txtErrorCargarAudio">Ha sucedido un error al intentar cargar el audio</string>
+    <string name="txtGrabarAudio">Grabar audio</string>
+    <string name="txtPararAudio">Dejar de grabar</string>
 </resources>

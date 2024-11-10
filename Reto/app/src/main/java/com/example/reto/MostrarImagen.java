@@ -48,7 +48,7 @@ public class MostrarImagen extends AppCompatActivity {
         Intent intentRecoger = getIntent();
         imagen = intentRecoger.getStringExtra("IMAGEN");
 
-        File archivoImagen = new File(getFilesDir(), "Imagenes/" + imagen);
+        File archivoImagen = new File(getFilesDir(), "IMAGENES/" + imagen);
         if(archivoImagen.exists()){
             Bitmap bitmap = BitmapFactory.decodeFile(archivoImagen.getAbsolutePath());
             ivMostrar.setImageBitmap(bitmap);

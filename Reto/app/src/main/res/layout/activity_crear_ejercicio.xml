@@ -24,7 +24,7 @@
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_marginTop="20dp"
-        app:layout_constraintEnd_toStartOf="@+id/ibAudio"
+        app:layout_constraintEnd_toStartOf="@+id/btnAudio"
         app:layout_constraintHorizontal_bias="0.509"
         app:layout_constraintStart_toEndOf="@+id/ibImagen"
         app:layout_constraintTop_toBottomOf="@+id/tvDescripcion"
@@ -35,15 +35,18 @@
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_marginStart="28dp"
+        app:layout_constraintBottom_toBottomOf="@+id/ibVideo"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/ibVideo"
         app:srcCompat="@drawable/iconoimagen" />
 
-    <ImageButton
-        android:id="@+id/ibAudio"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+    <Button
+        android:id="@+id/btnAudio"
+        android:layout_width="106dp"
+        android:layout_height="59dp"
         android:layout_marginEnd="32dp"
+        android:text="@string/txtGrabarAudio"
+        app:layout_constraintBottom_toBottomOf="@+id/ibVideo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/ibVideo"
         app:srcCompat="@drawable/iconoaudio" />
