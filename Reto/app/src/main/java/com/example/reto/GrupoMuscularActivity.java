@@ -2,7 +2,8 @@ package com.example.reto;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Typeface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -22,6 +23,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +39,6 @@ public class GrupoMuscularActivity extends AppCompatActivity {
     private DBAccesible dao;
     private final int main = 1;
 
-    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +58,7 @@ public class GrupoMuscularActivity extends AppCompatActivity {
         } else {
             grupo = "";
         }
-        ejercicios = dao.getEjerciciosGrupoMuscular(grupo);
+
         tit = (TextView) findViewById(R.id.textTitulo);
         tit.setText(grupo);
 
@@ -112,9 +113,8 @@ public class GrupoMuscularActivity extends AppCompatActivity {
     }
 
     private void cargarTabla() {
-        ejercicios.clear();
         ejercicios = dao.getEjerciciosGrupoMuscular(grupo);
-        // Limpiar los datos de la tabla y dejar el encabezado
+
         int rowCount = tabla.getChildCount();
         if (rowCount > 1) {
             for (int i = 1; i < rowCount; i++) {
@@ -134,29 +134,54 @@ public class GrupoMuscularActivity extends AppCompatActivity {
                 ));
 
 
+                // Crear y rellenar la columna de la imagen
+                ImageView imagen = new ImageView(this);
+
+                imagen.setPadding(10, 10, 10, 10); // Padding para hacer mÃ¡s grande la celda
+                File archivoImagen = new File(getFilesDir(), "IMAGENES/" + ejer.getValue().getImagen());
+                if(archivoImagen.exists()){
+                    Bitmap bitmap = BitmapFactory.decodeFile(archivoImagen.getAbsolutePath());
+                    imagen.setImageBitmap(bitmap);
+                }else{
+                    Intent intentEnviar = new Intent();
+                    setResult(RESULT_CANCELED, intentEnviar);
+                    finish();
+                }
+                row.addView(imagen);
+
+
+
                 // Crear y rellenar la columna de nombre
                 TextView txtNombre = new TextView(this);
                 txtNombre.setText(ejer.getValue().getNombre());
-                txtNombre.setHeight(150);
-                txtNombre.setWidth(120);
+                txtNombre.setPadding(10, 10, 10, 10); // Padding para hacer mÃ¡s grande la celda
                 txtNombre.setGravity(Gravity.CENTER); // Centrar el texto
-                txtNombre.setBackgroundResource(R.drawable.cell_border);
-                txtNombre.setTextSize(18);
+                txtNombre.setTextSize(25);
                 row.addView(txtNombre);
 
                 // Crear y rellenar la columna de series y repeticiones
                 TextView txtSeries = new TextView(this);
                 txtSeries.setText(ejer.getValue().getSeries() + " x " + ejer.getValue().getRepeticiones());
-                txtSeries.setHeight(150);
-                txtSeries.setWidth(120);
-                txtSeries.setGravity(Gravity.CENTER);
-                txtSeries.setBackgroundResource(R.drawable.cell_border);
-                txtSeries.setTextSize(18);
+                txtSeries.setPadding(10, 10, 10, 10); // Padding para hacer mÃ¡s grande la celda
+                txtSeries.setGravity(Gravity.CENTER); // Centrar el texto
+                txtSeries.setTextSize(25);
                 row.addView(txtSeries);
-
                 // Agregar la fila al TableLayout
                 tabla.addView(row);
+
+                // Agregar el evento de clic a la fila
+                row.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        irVistaEjercicio(ejer.getValue());
+                    }
+                });
             }
         }
+    }
+
+    private void irVistaEjercicio(Ejercicio ejercicioSeleccionado) {
+        Intent intent = new Intent(GrupoMuscularActivity.this, MostrarEjercicioActivity.class);
+        intent.putExtra("EJERCICIO", ejercicioSeleccionado);
     }
 }
