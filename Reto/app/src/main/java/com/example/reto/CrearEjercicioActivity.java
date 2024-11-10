@@ -2,6 +2,7 @@ package com.example.reto;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -24,9 +25,12 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import java.io.File;
-import java.util.HashMap;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class CrearEjercicioActivity extends AppCompatActivity {
 
@@ -47,17 +51,21 @@ public class CrearEjercicioActivity extends AppCompatActivity {
     private ImageButton ibVideo;
     private ImageButton ibAudio;
 
-    private List<String> grupos;
+    private List<String> nombreGrupos = null;
+    private List<String> grupos = new ArrayList<>();
 
     private Boolean imgOK = false;
     private Boolean vidOK = false;
     private Boolean audOK = false;
 
     private DBAccesible dao;
-    
-    private static final int REQUEST_CAMERA_PERMISSION = 1;
-    private static final int REQUEST_AUDIO_PERMISSION = 2;
-    private static final int REQUEST_CAMERA_AND_AUDIO_PERMISSION = 3;
+
+    private Bitmap imagenTemporal;
+
+    private Uri uriVideoTemporal;
+    private Uri uriAudioTemporal;
+
+    private static final int PEDIR_PERMISOS_AUDIO_Y_CAMARA = 3;
     private static final int CAPTURA_IMAGEN = 101;
     private static final int CAPTURA_VIDEO = 102;
     private static final int CAPTURA_AUDIO = 103;
@@ -75,16 +83,12 @@ public class CrearEjercicioActivity extends AppCompatActivity {
 
         dao = new DBAccess(this);
 
-        etNombre = findViewById(R.id.etNombre);
-        etSeries = findViewById(R.id.etSeries);
-        etRepeticiones = findViewById(R.id.etRepeticiones);
-        etDescripcion = findViewById(R.id.etDescripcion);
+        etNombre = findViewById(R.id.tvNombre);
+        etSeries = findViewById(R.id.tvSeries);
+        etRepeticiones = findViewById(R.id.tvRepeticiones);
+        etDescripcion = findViewById(R.id.tvDescripcion);
 
-        cbGrupo = findViewById(R.id.cbGrupo);
-        grupos = dao.getGrupos();
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, grupos);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        cbGrupo.setAdapter(adapter);
+        cbGrupo = findViewById(R.id.tvGrupo);
 
         btnSalir = findViewById(R.id.btnSalir);
         btnSalir.setOnClickListener(this::cerrarApp);
@@ -104,8 +108,19 @@ public class CrearEjercicioActivity extends AppCompatActivity {
         ibAudio = findViewById(R.id.ibAudio);
         ibAudio.setOnClickListener(this::subirAudio);
 
-        solicitarPermisos();
+        cargarDatosEnCombo();
 
+        solicitarPermisos();
+        
+    }
+
+    private void cargarDatosEnCombo() {
+        nombreGrupos = dao.getGrupos();
+        grupos.add((String) getText(R.string.txtSelecciona).toString());
+        grupos.addAll(nombreGrupos);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, grupos);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        cbGrupo.setAdapter(adapter);
     }
 
     private void solicitarPermisos() {
@@ -115,39 +130,10 @@ public class CrearEjercicioActivity extends AppCompatActivity {
             // Solicita ambos permisos en una sola llamada
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO},
-                    REQUEST_CAMERA_AND_AUDIO_PERMISSION);
+                    PEDIR_PERMISOS_AUDIO_Y_CAMARA);
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == REQUEST_CAMERA_AND_AUDIO_PERMISSION) {
-            boolean cameraPermissionGranted = false;
-            boolean audioPermissionGranted = false;
-
-            // Revisa los resultados de ambos permisos
-            for (int i = 0; i < permissions.length; i++) {
-                if (permissions[i].equals(Manifest.permission.CAMERA)) {
-                    cameraPermissionGranted = grantResults[i] == PackageManager.PERMISSION_GRANTED;
-                } else if (permissions[i].equals(Manifest.permission.RECORD_AUDIO)) {
-                    audioPermissionGranted = grantResults[i] == PackageManager.PERMISSION_GRANTED;
-                }
-            }
-
-            if (cameraPermissionGranted && audioPermissionGranted) {
-                // Ambos permisos fueron concedidos
-                Toast.makeText(this, "Permisos de cámara y audio concedidos", Toast.LENGTH_SHORT).show();
-            } else {
-                // Al menos uno de los permisos fue denegado
-                Toast.makeText(this, "Sin aceptar los permisos no se puede crear un ejercicio", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent();
-                setResult(RESULT_CANCELED, intent);
-                finish();
-            }
-        }
-    }
 
     private void subirAudio(View view) {
         if(etNombre.getText().toString().isEmpty()){
@@ -178,7 +164,8 @@ public class CrearEjercicioActivity extends AppCompatActivity {
             Toast.makeText(this, "Primero introduce el nombre del ejercicio" ,
                     Toast.LENGTH_SHORT).show();
         }else{
-            abrirCamara("VIDEO");
+            Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+            startActivityForResult(intent, CAPTURA_VIDEO);
         }
     }
 
@@ -187,48 +174,25 @@ public class CrearEjercicioActivity extends AppCompatActivity {
             Toast.makeText(this, "Primero introduce el nombre del ejercicio",
                     Toast.LENGTH_SHORT).show();
         } else {
-            abrirCamara("IMAGEN");
-        }
-    }
-
-
-    private void abrirCamara(String queHacer) {
-        if(queHacer.equals("IMAGEN")){
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            String nombreArchivo = "IMG_" + etNombre.getText().toString() + ".jpg";
-
-            File directorio = new File(getFilesDir(), "Imagenes");
-            if (!directorio.exists()) {
-                directorio.mkdirs(); // Crea el directorio si no existe
-            }
-
-            File imagen = new File(directorio, nombreArchivo);
-            Uri uriImagen = FileProvider.getUriForFile(this, "com.example.reto.fileprovider", imagen);
-
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, uriImagen);
             startActivityForResult(intent, CAPTURA_IMAGEN);
-        }else{
-            Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-            String nombreArchivo = "VID_" + etNombre.getText().toString() + ".mp4";
-
-            File directorio = new File(getFilesDir(), "Videos");
-            if (!directorio.exists()) {
-                directorio.mkdirs(); // Crea el directorio si no existe
-            }
-
-            File video = new File(directorio, nombreArchivo);
-            Uri uriVideo = FileProvider.getUriForFile(this, "com.example.reto.fileprovider", video);
-
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, uriVideo);
-            startActivityForResult(intent, CAPTURA_VIDEO);
         }
-
     }
 
+
+    private void cerrarApp(View view) {
+        finishAffinity();
+    }
+
+    private void volverAtras(View view){
+        Intent intent = new Intent();
+        setResult(RESULT_OK, intent);
+        finish();
+    }
 
     private void crearEjercicio(View view) {
         ejercicio = new Ejercicio();
-        if(etNombre.getText().toString().isEmpty() || cbGrupo.getSelectedItem().equals(-1)
+        if(etNombre.getText().toString().isEmpty() || cbGrupo.getSelectedItem().equals(0)
                 || etSeries.getText().toString().isEmpty() || etRepeticiones.getText().toString().isEmpty()
                 || etDescripcion.getText().toString().isEmpty()){
             Toast.makeText(this, "Los campos tienen que estar llenos" ,
@@ -242,10 +206,17 @@ public class CrearEjercicioActivity extends AppCompatActivity {
                 ejercicio.setRepeticiones(Integer.parseInt(etRepeticiones.getText().toString()));
                 ejercicio.setDescripcion(etDescripcion.getText().toString());
                 if(imgOK){
-                    ejercicio.setImagen("IMG_"+etNombre.getText().toString());
+                    if (etNombre.getText().toString().isEmpty()) {
+                        Toast.makeText(this, "Primero introduce el nombre del ejercicio", Toast.LENGTH_SHORT).show();
+                    } else {
+                        ejercicio.setImagen("IMG_" + etNombre.getText().toString() + ".jpeg");
+                        guardarImagen();
+                    }
+
                 }
                 if(vidOK){
                     ejercicio.setVideo("VID_"+etNombre.getText().toString());
+                    guardarVideo();
                 }
                 if(audOK){
                     ejercicio.setAudio("AUD_"+etNombre.getText().toString());
@@ -265,14 +236,124 @@ public class CrearEjercicioActivity extends AppCompatActivity {
 
     }
 
-    private void cerrarApp(View view) {
-        finishAffinity();
+    private void guardarVideo() {
+        if (uriVideoTemporal != null) {
+            InputStream inputStream = null;
+            OutputStream outputStream = null;
+            try {
+                // Obtener un InputStream desde el URI del video
+                inputStream = getContentResolver().openInputStream(uriVideoTemporal);
+
+                // Crear el archivo de destino en el almacenamiento interno
+                File directory = new File(getFilesDir(), "videos"); // Crea un directorio llamado "videos"
+                if (!directory.exists()) {
+                    directory.mkdirs(); // Si no existe, lo crea
+                }
+
+                // Nombre del archivo de video
+                String videoName = "VID_" + etNombre.getText().toString() + ".mp4";
+                File outputFile = new File(directory, videoName);
+
+                // Crear un OutputStream para escribir el video en el archivo de destino
+                outputStream = new FileOutputStream(outputFile);
+
+                // Copiar el contenido del InputStream al OutputStream (guardar el video)
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = inputStream.read(buffer)) > 0) {
+                    outputStream.write(buffer, 0, length);
+                }
+
+                // Cerrar streams
+                inputStream.close();
+                outputStream.close();
+
+                // Actualizar la URI de video del ejercicio
+                ejercicio.setVideo(outputFile.getAbsolutePath());  // Guardar la ruta del archivo en el objeto Ejercicio
+
+                Toast.makeText(this, "Video guardado correctamente", Toast.LENGTH_SHORT).show();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Error al guardar el video", Toast.LENGTH_SHORT).show();
+            } finally {
+                // Asegurarse de cerrar los streams si algo falla
+                try {
+                    if (inputStream != null) {
+                        inputStream.close();
+                    }
+                    if (outputStream != null) {
+                        outputStream.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            Toast.makeText(this, "No se ha seleccionado un video", Toast.LENGTH_SHORT).show();
+        }
     }
 
-    private void volverAtras(View view){
-        Intent intent = new Intent();
-        setResult(RESULT_OK, intent);
-        finish();
+
+    private void guardarImagen() {
+        // Nombre del archivo que se va a guardar
+        String nombreArchivo = "IMG_" + etNombre.getText().toString() + ".jpeg";
+
+        // Crear el directorio "Imagenes" en el almacenamiento interno
+        File directorio = new File(getFilesDir(), "Imagenes");
+        if (!directorio.exists()) {
+            directorio.mkdirs(); // Si el directorio no existe, lo crea
+        }
+
+        // Crear el archivo donde se guardará la imagen
+        File imagen = new File(directorio, nombreArchivo);
+
+        try {
+            // Abre un flujo de salida para el archivo
+            FileOutputStream fos = new FileOutputStream(imagen);
+
+            // Comprimir la imagen en formato JPEG con calidad 100 (sin pérdida)
+
+            imagenTemporal.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+
+            // Cierra el flujo de salida
+            fos.close();
+
+            // Mostrar un mensaje indicando que la imagen ha sido guardada
+            Toast.makeText(this, "Imagen guardada en almacenamiento interno", Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            Toast.makeText(this, "Error al guardar la imagen", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == PEDIR_PERMISOS_AUDIO_Y_CAMARA) {
+            boolean permisosCamara = false;
+            boolean permisosAudio = false;
+
+            // Revisa los resultados de ambos permisos
+            for (int i = 0; i < permissions.length; i++) {
+                if (permissions[i].equals(Manifest.permission.CAMERA)) {
+                    permisosCamara = grantResults[i] == PackageManager.PERMISSION_GRANTED;
+                } else if (permissions[i].equals(Manifest.permission.RECORD_AUDIO)) {
+                    permisosAudio = grantResults[i] == PackageManager.PERMISSION_GRANTED;
+                }
+            }
+
+            if (permisosCamara && permisosAudio) {
+                // Ambos permisos fueron concedidos
+                Toast.makeText(this, "Permisos de cámara y audio concedidos", Toast.LENGTH_SHORT).show();
+            } else {
+                // Al menos uno de los permisos fue denegado
+                Toast.makeText(this, "Sin aceptar los permisos no se puede crear un ejercicio", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent();
+                setResult(RESULT_CANCELED, intent);
+                finish();
+            }
+        }
     }
 
     @Override
@@ -283,6 +364,8 @@ public class CrearEjercicioActivity extends AppCompatActivity {
             case CAPTURA_IMAGEN:
                 if(resultCode == RESULT_OK) {
                     imgOK = true;
+                    Bundle extras = data.getExtras();
+                    imagenTemporal = (Bitmap) extras.get("data");
                 } else {
                     Toast.makeText(this, "Captura de imagen cancelada", Toast.LENGTH_SHORT).show();
                 }
@@ -290,6 +373,7 @@ public class CrearEjercicioActivity extends AppCompatActivity {
             case CAPTURA_VIDEO:
                 if(resultCode == RESULT_OK) {
                     vidOK = true;
+                    uriVideoTemporal = data.getData();
                 } else {
                     Toast.makeText(this, "Captura de video cancelada", Toast.LENGTH_SHORT).show();
                 }
@@ -297,6 +381,7 @@ public class CrearEjercicioActivity extends AppCompatActivity {
             case CAPTURA_AUDIO:
                 if(resultCode == RESULT_OK) {
                     audOK = true;
+                    uriAudioTemporal = data.getData();
                 } else {
                     Toast.makeText(this, "Captura de audio cancelada", Toast.LENGTH_SHORT).show();
                 }

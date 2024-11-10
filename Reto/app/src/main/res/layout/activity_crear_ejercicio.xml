@@ -27,7 +27,7 @@
         app:layout_constraintEnd_toStartOf="@+id/ibAudio"
         app:layout_constraintHorizontal_bias="0.509"
         app:layout_constraintStart_toEndOf="@+id/ibImagen"
-        app:layout_constraintTop_toBottomOf="@+id/etDescripcion"
+        app:layout_constraintTop_toBottomOf="@+id/tvDescripcion"
         app:srcCompat="@drawable/iconovideo" />
 
     <ImageButton
@@ -49,11 +49,12 @@
         app:srcCompat="@drawable/iconoaudio" />
 
     <Spinner
-        android:id="@+id/cbGrupo"
+        android:id="@+id/tvGrupo"
         android:layout_width="280dp"
         android:layout_height="50dp"
-        android:textColor="@android:color/white"
-        app:layout_constraintEnd_toEndOf="@+id/etNombre"
+        android:background="@color/white"
+        android:alpha="0.3"
+        app:layout_constraintEnd_toEndOf="@+id/tvNombre"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/textView15"
         app:layout_constraintTop_toBottomOf="@+id/textView15" />
@@ -65,13 +66,13 @@
         android:layout_marginTop="20dp"
         android:text="@string/txtGrupo"
         android:textColor="@color/white"
-        app:layout_constraintEnd_toEndOf="@+id/etNombre"
+        app:layout_constraintEnd_toEndOf="@+id/tvNombre"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/textView11"
-        app:layout_constraintTop_toBottomOf="@+id/etNombre" />
+        app:layout_constraintTop_toBottomOf="@+id/tvNombre" />
 
     <EditText
-        android:id="@+id/etDescripcion"
+        android:id="@+id/tvDescripcion"
         android:layout_width="280dp"
         android:layout_height="150dp"
         android:ems="10"
@@ -91,11 +92,11 @@
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/etSeries"
-        app:layout_constraintTop_toBottomOf="@+id/etSeries" />
+        app:layout_constraintStart_toStartOf="@+id/tvSeries"
+        app:layout_constraintTop_toBottomOf="@+id/tvSeries" />
 
     <EditText
-        android:id="@+id/etRepeticiones"
+        android:id="@+id/tvRepeticiones"
         android:layout_width="100dp"
         android:layout_height="50dp"
         android:digits="0123456789"
@@ -113,13 +114,13 @@
         android:layout_marginTop="20dp"
         android:text="@string/txtRepeticiones"
         android:textColor="@color/white"
-        app:layout_constraintEnd_toEndOf="@+id/cbGrupo"
+        app:layout_constraintEnd_toEndOf="@+id/tvGrupo"
         app:layout_constraintHorizontal_bias="0.9"
-        app:layout_constraintStart_toStartOf="@+id/cbGrupo"
-        app:layout_constraintTop_toBottomOf="@+id/cbGrupo" />
+        app:layout_constraintStart_toStartOf="@+id/tvGrupo"
+        app:layout_constraintTop_toBottomOf="@+id/tvGrupo" />
 
     <EditText
-        android:id="@+id/etNombre"
+        android:id="@+id/tvNombre"
         android:layout_width="280dp"
         android:layout_height="50dp"
         android:ems="10"
@@ -130,14 +131,14 @@
         app:layout_constraintTop_toBottomOf="@+id/textView11" />
 
     <EditText
-        android:id="@+id/etSeries"
+        android:id="@+id/tvSeries"
         android:layout_width="100dp"
         android:layout_height="50dp"
         android:digits="0123456789"
         android:ems="10"
         android:inputType="number"
         android:textColor="@color/white"
-        app:layout_constraintEnd_toStartOf="@+id/etRepeticiones"
+        app:layout_constraintEnd_toStartOf="@+id/tvRepeticiones"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/textView12"
         app:layout_constraintTop_toBottomOf="@+id/textView12" />
@@ -151,8 +152,8 @@
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/cbGrupo"
-        app:layout_constraintTop_toBottomOf="@+id/cbGrupo" />
+        app:layout_constraintStart_toStartOf="@+id/tvGrupo"
+        app:layout_constraintTop_toBottomOf="@+id/tvGrupo" />
 
     <TextView
         android:id="@+id/textView11"
@@ -161,7 +162,7 @@
         android:layout_marginTop="100dp"
         android:text="@string/txtNombre"
         android:textColor="@color/white"
-        app:layout_constraintStart_toStartOf="@+id/etNombre"
+        app:layout_constraintStart_toStartOf="@+id/tvNombre"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
