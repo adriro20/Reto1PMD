@@ -166,6 +166,8 @@ public class GrupoMuscularActivity extends AppCompatActivity {
                 txtSeries.setPadding(10, 10, 10, 10); // Padding para hacer mÃ¡s grande la celda
                 txtSeries.setGravity(Gravity.CENTER); // Centrar el texto
                 txtSeries.setTextSize(25);
+                row.setBackgroundColor(getResources().getColor(R.color.white));
+                row.setAlpha(0.7f);
                 row.addView(txtSeries);
                 // Agregar el evento de clic a la fila
                 row.setOnClickListener(new View.OnClickListener() {
