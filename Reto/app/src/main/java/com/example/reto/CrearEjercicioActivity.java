@@ -175,7 +175,7 @@ public class CrearEjercicioActivity extends AppCompatActivity {
 
             // Crear URI para el archivo grabado
             uriAudioTemporal = Uri.fromFile(archivoAudioTemporal);
-
+            audOK = true;
         }else{
             btnAudio.setText(R.string.txtPararAudio);
             try {
@@ -188,6 +188,7 @@ public class CrearEjercicioActivity extends AppCompatActivity {
                 recorder.prepare();
                 recorder.start();
                 grabando = true;
+
             } catch (IOException e) {
                 e.printStackTrace();
                 Toast.makeText(this, "Ha sucedido un error con el audio", Toast.LENGTH_SHORT).show();
@@ -234,11 +235,11 @@ public class CrearEjercicioActivity extends AppCompatActivity {
 
                 }
                 if(vidOK){
-                    ejercicio.setVideo("VID_"+etNombre.getText().toString());
+                    ejercicio.setVideo("VID_"+etNombre.getText().toString()+".mp4");
                     guardarVideo();
                 }
                 if(audOK){
-                    ejercicio.setAudio("AUD_"+etNombre.getText().toString());
+                    ejercicio.setAudio("AUD_"+etNombre.getText().toString()+".mp3");
                     guardarAudio();
                 }
 
@@ -264,14 +265,14 @@ public class CrearEjercicioActivity extends AppCompatActivity {
             inputStream = getContentResolver().openInputStream(uriAudioTemporal);
 
             // Crear el archivo de destino en el almacenamiento interno
-            File directory = new File(getFilesDir(), "VIDEOS"); // Crea un directorio llamado "videos"
+            File directory = new File(getFilesDir(), "AUDIOS"); // Crea un directorio llamado "videos"
             if (!directory.exists()) {
                 directory.mkdirs(); // Si no existe, lo crea
             }
 
             // Nombre del archivo de video
-            String videoName = "AUD_" + etNombre.getText().toString() + ".mp3";
-            File outputFile = new File(directory, videoName);
+            String audioName = "AUD_" + etNombre.getText().toString() + ".mp3";
+            File outputFile = new File(directory, audioName);
 
             // Crear un OutputStream para escribir el video en el archivo de destino
             outputStream = new FileOutputStream(outputFile);
@@ -287,12 +288,10 @@ public class CrearEjercicioActivity extends AppCompatActivity {
             inputStream.close();
             outputStream.close();
 
-
             Toast.makeText(this, "Audio guardado correctamente", Toast.LENGTH_SHORT).show();
 
         } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Error al guardar el video", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error al guardar el audio", Toast.LENGTH_SHORT).show();
         } finally {
             // Asegurarse de cerrar los streams si algo falla
             try {
@@ -441,14 +440,6 @@ public class CrearEjercicioActivity extends AppCompatActivity {
                     uriVideoTemporal = data.getData();
                 } else {
                     Toast.makeText(this, "Captura de video cancelada", Toast.LENGTH_SHORT).show();
-                }
-                break;
-            case CAPTURA_AUDIO:
-                if(resultCode == RESULT_OK) {
-                    audOK = true;
-                    uriAudioTemporal = data.getData();
-                } else {
-                    Toast.makeText(this, "Captura de audio cancelada", Toast.LENGTH_SHORT).show();
                 }
                 break;
         }

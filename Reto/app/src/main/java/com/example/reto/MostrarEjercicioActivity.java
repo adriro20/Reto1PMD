@@ -74,8 +74,8 @@ public class MostrarEjercicioActivity extends AppCompatActivity {
         if(ejercicio != null){
             tvNombre.setText(ejercicio.getNombre());
             tvGrupo.setText(ejercicio.getGrupo());
-            tvSeries.setText(ejercicio.getSeries());
-            tvRepeticiones.setText(ejercicio.getRepeticiones());
+            tvSeries.setText(String.valueOf(ejercicio.getSeries()));
+            tvRepeticiones.setText(String.valueOf(ejercicio.getRepeticiones()));
             tvDescripcion.setText(ejercicio.getDescripcion());
         }else{
             Toast.makeText(this, R.string.txtErrorCargarEjercicio ,
