@@ -1,4 +1,4 @@
-package com.example.reto;
+package com.example.reto.activities;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -20,10 +20,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.example.reto.R;
+import com.example.reto.controller.DBAccesible;
+import com.example.reto.controller.DBAccess;
+import com.example.reto.model.Ejercicio;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -76,7 +80,6 @@ public class CrearEjercicioActivity extends AppCompatActivity {
     private static final int PEDIR_PERMISOS_AUDIO_Y_CAMARA = 3;
     private static final int CAPTURA_IMAGEN = 101;
     private static final int CAPTURA_VIDEO = 102;
-    private static final int CAPTURA_AUDIO = 103;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,23 +149,14 @@ public class CrearEjercicioActivity extends AppCompatActivity {
 
 
     private void subirVideo(View view) {
-        if(etNombre.getText().toString().isEmpty()){
-            Toast.makeText(this, "Primero introduce el nombre del ejercicio" ,
-                    Toast.LENGTH_SHORT).show();
-        }else{
-            Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-            startActivityForResult(intent, CAPTURA_VIDEO);
-        }
+        Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        startActivityForResult(intent, CAPTURA_VIDEO);
     }
 
     public void subirImagen(View view) {
-        if (etNombre.getText().toString().isEmpty()) {
-            Toast.makeText(this, "Primero introduce el nombre del ejercicio",
-                    Toast.LENGTH_SHORT).show();
-        } else {
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(intent, CAPTURA_IMAGEN);
-        }
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, CAPTURA_IMAGEN);
+
     }
 
     private void subirAudio(View view) {
@@ -176,6 +170,7 @@ public class CrearEjercicioActivity extends AppCompatActivity {
             // Crear URI para el archivo grabado
             uriAudioTemporal = Uri.fromFile(archivoAudioTemporal);
             audOK = true;
+            Toast.makeText(this, R.string.txtGrabacionTerminada, Toast.LENGTH_LONG).show();
         }else{
             btnAudio.setText(R.string.txtPararAudio);
             try {
@@ -188,10 +183,10 @@ public class CrearEjercicioActivity extends AppCompatActivity {
                 recorder.prepare();
                 recorder.start();
                 grabando = true;
-
+                Toast.makeText(this, R.string.txtGrabando, Toast.LENGTH_LONG).show();
             } catch (IOException e) {
                 e.printStackTrace();
-                Toast.makeText(this, "Ha sucedido un error con el audio", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.txtErrorGrabacionAudio, Toast.LENGTH_SHORT).show();
                 btnAudio.setText(R.string.txtGrabarAudio);
             }
 
@@ -214,45 +209,35 @@ public class CrearEjercicioActivity extends AppCompatActivity {
         ejercicio = new Ejercicio();
         if(etNombre.getText().toString().isEmpty() || cbGrupo.getSelectedItem().equals(0)
                 || etSeries.getText().toString().isEmpty() || etRepeticiones.getText().toString().isEmpty()
-                || etDescripcion.getText().toString().isEmpty()){
-            Toast.makeText(this, "Los campos tienen que estar llenos" ,
+                || etDescripcion.getText().toString().isEmpty() || !imgOK || !vidOK || !audOK){
+            Toast.makeText(this, R.string.txtCamposVacios ,
                     Toast.LENGTH_LONG).show();
         }else{
-            if(etSeries.getText().toString().matches("\\d+") &&
-                    etRepeticiones.getText().toString().matches("\\d+")){
-                ejercicio.setNombre(etNombre.getText().toString());
-                ejercicio.setGrupo(cbGrupo.getSelectedItem().toString());
-                ejercicio.setSeries(Integer.parseInt(etSeries.getText().toString()));
-                ejercicio.setRepeticiones(Integer.parseInt(etRepeticiones.getText().toString()));
-                ejercicio.setDescripcion(etDescripcion.getText().toString());
-                if(imgOK){
-                    if (etNombre.getText().toString().isEmpty()) {
-                        Toast.makeText(this, "Primero introduce el nombre del ejercicio", Toast.LENGTH_SHORT).show();
-                    } else {
-                        ejercicio.setImagen("IMG_" + etNombre.getText().toString() + ".jpeg");
-                        guardarImagen();
-                    }
-
-                }
-                if(vidOK){
-                    ejercicio.setVideo("VID_"+etNombre.getText().toString()+".mp4");
-                    guardarVideo();
-                }
-                if(audOK){
-                    ejercicio.setAudio("AUD_"+etNombre.getText().toString()+".mp3");
-                    guardarAudio();
-                }
-
-                dao.setEjercicio(ejercicio);
-
-                Toast.makeText(this, "Ejercicio guardado correctamente" , Toast.LENGTH_LONG).show();
-                Intent intent = new Intent();
-                setResult(RESULT_OK, intent);
-                finish();
-            }else{
-                Toast.makeText(this, "Los campos de series y repeticiones tienen que " +
-                        "ser numéricos" , Toast.LENGTH_LONG).show();
+            ejercicio.setNombre(etNombre.getText().toString());
+            ejercicio.setGrupo(cbGrupo.getSelectedItem().toString());
+            ejercicio.setSeries(Integer.parseInt(etSeries.getText().toString()));
+            ejercicio.setRepeticiones(Integer.parseInt(etRepeticiones.getText().toString()));
+            ejercicio.setDescripcion(etDescripcion.getText().toString());
+            if(imgOK){
+                guardarImagen();
+                ejercicio.setImagen("IMG_" + etNombre.getText().toString() + ".jpeg");
             }
+            if(vidOK){
+                guardarVideo();
+                ejercicio.setVideo("VID_"+etNombre.getText().toString()+".mp4");
+            }
+            if(audOK){
+                guardarAudio();
+                ejercicio.setAudio("AUD_"+etNombre.getText().toString()+".mp3");
+            }
+
+            dao.setEjercicio(ejercicio);
+
+            Toast.makeText(this, R.string.txtEjercicioGuardado , Toast.LENGTH_LONG).show();
+            Intent intent = new Intent();
+            setResult(RESULT_OK, intent);
+            finish();
+
         }
 
     }
@@ -288,10 +273,8 @@ public class CrearEjercicioActivity extends AppCompatActivity {
             inputStream.close();
             outputStream.close();
 
-            Toast.makeText(this, "Audio guardado correctamente", Toast.LENGTH_SHORT).show();
-
         } catch (IOException e) {
-            Toast.makeText(this, "Error al guardar el audio", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.txtErrorGuardarAudio, Toast.LENGTH_SHORT).show();
         } finally {
             // Asegurarse de cerrar los streams si algo falla
             try {
@@ -340,11 +323,9 @@ public class CrearEjercicioActivity extends AppCompatActivity {
             inputStream.close();
             outputStream.close();
 
-            Toast.makeText(this, "Video guardado correctamente", Toast.LENGTH_SHORT).show();
-
         } catch (IOException e) {
             e.printStackTrace();
-            Toast.makeText(this, "Error al guardar el video", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.txtErrorGuardarVideo, Toast.LENGTH_SHORT).show();
         } finally {
             // Asegurarse de cerrar los streams si algo falla
             try {
@@ -386,7 +367,7 @@ public class CrearEjercicioActivity extends AppCompatActivity {
             fos.close();
 
         } catch (IOException e) {
-            Toast.makeText(this, "Error al guardar la imagen", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.txtErrorGuardarImagen, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -407,12 +388,9 @@ public class CrearEjercicioActivity extends AppCompatActivity {
                 }
             }
 
-            if (permisosCamara && permisosAudio) {
-                // Ambos permisos fueron concedidos
-                Toast.makeText(this, "Permisos de cámara y audio concedidos", Toast.LENGTH_SHORT).show();
-            } else {
+            if (!permisosCamara || !permisosAudio) {
                 // Al menos uno de los permisos fue denegado
-                Toast.makeText(this, "Sin aceptar los permisos no se puede crear un ejercicio", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.txtPermisosNoAceptados, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent();
                 setResult(RESULT_CANCELED, intent);
                 finish();
@@ -431,7 +409,7 @@ public class CrearEjercicioActivity extends AppCompatActivity {
                     Bundle extras = data.getExtras();
                     imagenTemporal = (Bitmap) extras.get("data");
                 } else {
-                    Toast.makeText(this, "Captura de imagen cancelada", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.txtCapturaImagenCancelada, Toast.LENGTH_SHORT).show();
                 }
                 break;
             case CAPTURA_VIDEO:
@@ -439,7 +417,7 @@ public class CrearEjercicioActivity extends AppCompatActivity {
                     vidOK = true;
                     uriVideoTemporal = data.getData();
                 } else {
-                    Toast.makeText(this, "Captura de video cancelada", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.txtCapturaImagenCancelada, Toast.LENGTH_SHORT).show();
                 }
                 break;
         }

@@ -1,4 +1,4 @@
-package com.example.reto;
+package com.example.reto.activities;
 
 import android.content.Intent;
 import android.media.MediaPlayer;
@@ -15,23 +15,25 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.reto.R;
+
 import java.io.File;
 
-public class MostrarAudio extends AppCompatActivity {
+public class MostrarVideo extends AppCompatActivity {
 
     private Button btnSalir;
     private Button btnVolver;
 
-    private String audio;
+    private String video;
 
     private MediaController mediaController;
-    private VideoView vvAudio;
+    private VideoView vvVideo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_mostrar_audio);
+        setContentView(R.layout.activity_mostrar_video);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -45,27 +47,26 @@ public class MostrarAudio extends AppCompatActivity {
         btnVolver.setOnClickListener(this::volverAtras);
 
         Intent intentRecoger = getIntent();
-        audio = intentRecoger.getStringExtra("AUDIO");
+        video = intentRecoger.getStringExtra("VIDEO");
 
-        vvAudio = findViewById(R.id.vvAudio);
+        vvVideo = findViewById(R.id.vvVideo);
         mediaController = new MediaController(this);
 
-        vvAudio.setMediaController(mediaController);
-        mediaController.setAnchorView(vvAudio);
+        vvVideo.setMediaController(mediaController);
+        mediaController.setAnchorView(vvVideo);
 
-        File archivoVideo = new File(getFilesDir(), "AUDIOS/" + audio);
+        File archivoVideo = new File(getFilesDir(), "VIDEOS/" + video);
         if (archivoVideo.exists()) {
-            vvAudio.setVideoURI(Uri.fromFile(archivoVideo));
+            vvVideo.setVideoURI(Uri.fromFile(archivoVideo));
 
-            vvAudio.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            vvVideo.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mediaPlayer) {
                     mediaController.show(20000);
-                    vvAudio.start();
+                    vvVideo.start();
                 }
             });
-
-            vvAudio.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            vvVideo.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
                     mediaController.show(20000);
@@ -76,6 +77,8 @@ public class MostrarAudio extends AppCompatActivity {
             setResult(RESULT_CANCELED, intentEnviar);
             finish();
         }
+
+
     }
 
     private void cerrarApp(View view) {

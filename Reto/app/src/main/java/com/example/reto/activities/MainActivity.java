@@ -1,14 +1,12 @@
-package com.example.reto;
+package com.example.reto.activities;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -20,6 +18,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.example.reto.R;
+import com.example.reto.controller.DBAccesible;
+import com.example.reto.controller.DBAccess;
+import com.example.reto.model.Ejercicio;
 
 import java.util.ArrayList;
 import java.util.HashMap;

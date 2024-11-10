@@ -6,17 +6,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/imgfondo"
-    tools:context=".GrupoMuscularActivity">
+    tools:context=".activities.GrupoMuscularActivity">
 
     <TextView
         android:id="@+id/textTitulo"
         android:layout_width="178dp"
         android:layout_height="37dp"
-        android:layout_marginStart="92dp"
-        android:textColor="@color/white"
         android:layout_marginTop="16dp"
         android:textAlignment="center"
+        android:textColor="@color/white"
         android:textSize="27sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -24,43 +24,44 @@
         android:id="@+id/btnVolver"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="304dp"
-        android:layout_marginTop="64dp"
         android:text="@string/txtVolver"
         android:textSize="10sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@+id/btnSalir"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.864"
+        app:layout_constraintStart_toEndOf="@+id/btnSalir"
+        app:layout_constraintTop_toBottomOf="@+id/textTitulo"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/btnSalir"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="196dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginStart="28dp"
         android:text="@string/txtSalir"
         android:textSize="10sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/textTitulo" />
 
     <Spinner
         android:id="@+id/cboxMusculos"
         android:layout_width="273dp"
         android:layout_height="67dp"
-        android:layout_marginStart="68dp"
-        android:layout_marginTop="144dp"
-        android:background="@color/white"
+        android:layout_marginTop="32dp"
         android:alpha="0.7"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/line" />
 
     <TableLayout
         android:id="@+id/tablaEjer"
         android:layout_width="362dp"
         android:layout_height="449dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="256dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/cboxMusculos">
 
         <TableRow
             android:layout_width="match_parent"
@@ -70,32 +71,32 @@
             <TextView
                 android:layout_width="135dp"
                 android:layout_height="60dp"
+                android:background="@drawable/cell_border"
                 android:gravity="center"
                 android:text="@string/txtImagen"
-                android:textStyle="bold"
-                android:background="@drawable/cell_border"
+                android:textColor="@color/black"
                 android:textSize="18sp"
-                android:textColor="@color/black"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:layout_width="135dp"
                 android:layout_height="60dp"
+                android:background="@drawable/cell_border"
                 android:gravity="center"
                 android:text="@string/txtNombre"
-                android:textStyle="bold"
-                android:background="@drawable/cell_border"
+                android:textColor="@color/black"
                 android:textSize="18sp"
-                android:textColor="@color/black"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:layout_width="90dp"
                 android:layout_height="60dp"
+                android:background="@drawable/cell_border"
                 android:gravity="center"
                 android:text="@string/txtSxR"
-                android:textStyle="bold"
-                android:background="@drawable/cell_border"
+                android:textColor="@color/black"
                 android:textSize="18sp"
-                android:textColor="@color/black"/>
+                android:textStyle="bold" />
         </TableRow>
     </TableLayout>
 

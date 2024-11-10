@@ -1,10 +1,13 @@
-package com.example.reto;
+package com.example.reto.controller;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.widget.Toast;
+
+import com.example.reto.R;
+import com.example.reto.model.Ejercicio;
 
 import java.util.ArrayList;
 import java.util.HashMap;

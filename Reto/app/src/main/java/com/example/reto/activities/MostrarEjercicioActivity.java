@@ -1,10 +1,9 @@
-package com.example.reto;
+package com.example.reto.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,6 +13,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.example.reto.R;
+import com.example.reto.model.Ejercicio;
 
 public class MostrarEjercicioActivity extends AppCompatActivity {
 

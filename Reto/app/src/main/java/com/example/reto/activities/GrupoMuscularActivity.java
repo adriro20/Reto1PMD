@@ -1,6 +1,5 @@
-package com.example.reto;
+package com.example.reto.activities;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -22,6 +21,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.example.reto.R;
+import com.example.reto.controller.DBAccesible;
+import com.example.reto.controller.DBAccess;
+import com.example.reto.model.Ejercicio;
 
 import java.io.File;
 import java.util.List;

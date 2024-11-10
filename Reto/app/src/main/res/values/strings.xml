@@ -24,5 +24,18 @@
     <string name="txtGrabarAudio">Grabar audio</string>
     <string name="txtPararAudio">Dejar de grabar</string>
     <string name="txtSxR">S x R</string>
+    <string name="txtGrabando">Grabando…</string>
+    <string name="txtGrabacionTerminada">Grabación terminada correctamente</string>
+    <string name="txtErrorGrabacionAudio">Ha sucedido un error en la grabación del audio</string>
+    <string name="txtCamposVacios">Todos los campos tienen que estar llenos</string>
+    <string name="txtEjercicioGuardado">Ejercicio guardado correctamente</string>
+    <string name="txtErrorGuardarAudio">Error al guardar el audio</string>
+    <string name="txtErrorGuardarVideo">Error al guardar el video</string>
+    <string name="txtErrorGuardarImagen">Error al guardar la imagen</string>
+    <string name="txtPermisosNoAceptados">Sin aceptar los permisos no se puede crear un ejercicio</string>
+    <string name="txtCapturaImagenCancelada">Captura de imagen cancelada</string>
+    <string name="txtCapturaVideoCancelada">Captura de video cancelada</string>
+    <string name="txtAudio">Audio</string>
     <string name="txtImagen">Imagen</string>
+    <string name="txtVideo">Video</string>
 </resources>

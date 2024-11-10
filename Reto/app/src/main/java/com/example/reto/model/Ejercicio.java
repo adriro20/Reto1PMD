@@ -1,4 +1,4 @@
-package com.example.reto;
+package com.example.reto.model;
 
 import java.io.Serializable;
 

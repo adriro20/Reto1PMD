@@ -1,10 +1,9 @@
-package com.example.reto;
+package com.example.reto.controller;
 
-import com.example.reto.Ejercicio;
+import com.example.reto.model.Ejercicio;
 
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 public interface DBAccesible {
 
