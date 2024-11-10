@@ -1,6 +1,7 @@
 package com.example.reto;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private String grupoSeleccionado;
     private final int anadirActivity = 1;
     private final int grupoActivity = 2;
+    private final int mostrarActivity = 3;
     List<String> nombreGrupos = null;
 
     @Override
@@ -98,6 +100,9 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         ejercicios = dao.getEjerciciosGrupoMuscular(grupo);
+        if (ejercicios.isEmpty()) {
+            Toast.makeText(this, R.string.txtNoHayEjercicios, Toast.LENGTH_SHORT).show();
+        } else {
         for (Map.Entry<String, Ejercicio> ejer : ejercicios.entrySet()) {
             // Crear una fila
             TableRow row = new TableRow(this);
@@ -106,30 +111,42 @@ public class MainActivity extends AppCompatActivity {
                     TableRow.LayoutParams.WRAP_CONTENT
             ));
 
-
             // Crear y rellenar la columna de nombre
             TextView txtNombre = new TextView(this);
             txtNombre.setText(ejer.getValue().getNombre());
-            txtNombre.setHeight(150);
+            txtNombre.setHeight(180);
             txtNombre.setWidth(120);
             txtNombre.setGravity(Gravity.CENTER); // Centrar el texto
-            txtNombre.setBackgroundResource(R.drawable.cell_border);
             txtNombre.setTextSize(18);
             row.addView(txtNombre);
 
             // Crear y rellenar la columna de series y repeticiones
             TextView txtSeries = new TextView(this);
             txtSeries.setText(ejer.getValue().getSeries() + " x " + ejer.getValue().getRepeticiones());
-            txtSeries.setHeight(150);
+            txtSeries.setHeight(180);
             txtSeries.setWidth(120);
             txtSeries.setGravity(Gravity.CENTER);
-            txtSeries.setBackgroundResource(R.drawable.cell_border);
             txtSeries.setTextSize(18);
+            row.setBackgroundColor(getResources().getColor(R.color.white));
+            row.setAlpha(0.7f);
             row.addView(txtSeries);
+            row.setOnClickListener(this::irAEjer);
 
             // Agregar la fila al TableLayout
             tablaEjercicios.addView(row);
         }
+        }
+    }
+
+    private void irAEjer(View view) {
+        TableRow row = (TableRow) view;
+        TextView txtNombre = (TextView) row.getChildAt(0);
+        Ejercicio ej = new Ejercicio();
+
+        ej = ejercicios.get(txtNombre.getText().toString());
+        Intent intent = new Intent(MainActivity.this, MostrarEjercicioActivity.class);
+        intent.putExtra("EJERCICIO", ej);
+        startActivityForResult(intent, mostrarActivity);
     }
 
     private void cerrarApp(View view) {
@@ -138,12 +155,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void irAAnadir(View view) {
         Intent intent = new Intent(MainActivity.this, CrearEjercicioActivity.class);
+
         startActivityForResult(intent, anadirActivity);
     }
 
     private void irAGrupo(View view) {
         grupoSeleccionado = comboGrupoMusc.getSelectedItem().toString();
-        if (grupoSeleccionado == "" || !grupoSeleccionado.isEmpty()) {
+        if (!grupoSeleccionado.equals(getText(R.string.txtSelecciona).toString())) {
             Intent intent = new Intent(MainActivity.this, GrupoMuscularActivity.class);
             intent.putExtra("GRUPO", grupoSeleccionado);
             startActivityForResult(intent, grupoActivity);
@@ -160,5 +178,12 @@ public class MainActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, grupos);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         comboGrupoMusc.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        comboGrupoMusc.setSelection(0);
     }
 }
