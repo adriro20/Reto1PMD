@@ -2,6 +2,7 @@ package com.example.reto;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -68,8 +69,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 //cargarTabla();
-
-                cargarTabla();
+                String grupo = comboGrupoMusc.getSelectedItem().toString();
+                if (grupo.equals(getText(R.string.txtSelecciona).toString())) {
+                    int rowCount = tablaEjercicios.getChildCount();
+                    if (rowCount > 1) {
+                        for (int y = 1; y < rowCount; y++) {
+                            tablaEjercicios.removeViewAt(1);
+                        }
+                    }
+                }else {
+                    cargarTabla(grupo);
+                }
             }
 
             @Override
@@ -79,27 +89,42 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void cargarTabla() {
+    private void cargarTabla(String grupo) {
         //limpiar los datos de la tabla
-        tablaEjercicios.removeAllViews();
-        String grupo = comboGrupoMusc.getSelectedItem().toString();
+        int rowCount = tablaEjercicios.getChildCount();
+        if (rowCount > 1) {
+            for (int i = 1; i < rowCount; i++) {
+                tablaEjercicios.removeViewAt(1);
+            }
+        }
         ejercicios = dao.getEjerciciosGrupoMuscular(grupo);
-        for(Map.Entry<String, Ejercicio> ejer : ejercicios.entrySet()){
-            //creamos una fila
+        for (Map.Entry<String, Ejercicio> ejer : ejercicios.entrySet()) {
+            // Crear una fila
             TableRow row = new TableRow(this);
+            row.setLayoutParams(new TableRow.LayoutParams(
+                    TableRow.LayoutParams.MATCH_PARENT,
+                    TableRow.LayoutParams.WRAP_CONTENT
+            ));
 
-            //crear la imagen para ponerla en la primera columna
-            ImageView imgEjer = new ImageView(this);
 
-
-            //creamos y rellenamos la columna de nombre
+            // Crear y rellenar la columna de nombre
             TextView txtNombre = new TextView(this);
             txtNombre.setText(ejer.getValue().getNombre());
+            txtNombre.setHeight(150);
+            txtNombre.setWidth(120);
+            txtNombre.setGravity(Gravity.CENTER); // Centrar el texto
+            txtNombre.setBackgroundResource(R.drawable.cell_border);
+            txtNombre.setTextSize(18);
             row.addView(txtNombre);
 
-            //creamos y rellenamos la columna de sries y repeticiones
+            // Crear y rellenar la columna de series y repeticiones
             TextView txtSeries = new TextView(this);
-            txtSeries.setText(ejer.getValue().getSeries()+" x "+ejer.getValue().getRepeticiones());
+            txtSeries.setText(ejer.getValue().getSeries() + " x " + ejer.getValue().getRepeticiones());
+            txtSeries.setHeight(150);
+            txtSeries.setWidth(120);
+            txtSeries.setGravity(Gravity.CENTER);
+            txtSeries.setBackgroundResource(R.drawable.cell_border);
+            txtSeries.setTextSize(18);
             row.addView(txtSeries);
 
             // Agregar la fila al TableLayout
@@ -130,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void cargarDatosEnCombo() {
         nombreGrupos = dao.getGrupos();
-        grupos.add((String) getText(R.string.txtSelecciona).toString());
+        grupos.add(getText(R.string.txtSelecciona).toString());
         grupos.addAll(nombreGrupos);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, grupos);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
