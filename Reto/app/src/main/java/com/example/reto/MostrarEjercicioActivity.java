@@ -78,7 +78,7 @@ public class MostrarEjercicioActivity extends AppCompatActivity {
             tvRepeticiones.setText(ejercicio.getRepeticiones());
             tvDescripcion.setText(ejercicio.getDescripcion());
         }else{
-            Toast.makeText(this, "Ha sucedido un error al cargar el ejercicio seleccionado" ,
+            Toast.makeText(this, R.string.txtErrorCargarEjercicio ,
                     Toast.LENGTH_LONG).show();
             Intent intentError = new Intent();
             setResult(RESULT_CANCELED, intentError);
@@ -123,17 +123,17 @@ public class MostrarEjercicioActivity extends AppCompatActivity {
         switch (requestCode){
             case MOSTRAR_IMAGEN:
                 if(resultCode == RESULT_CANCELED) {
-                    Toast.makeText(this, "Ha sucedido un error al intentar cargar la imagen", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.txtErrorCargarImagen, Toast.LENGTH_SHORT).show();
                 }
                 break;
             case MOSTRAR_VIDEO:
                 if(resultCode == RESULT_CANCELED) {
-                    Toast.makeText(this, "Ha sucedido un error al intentar cargar el video", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.txtErrorCargarVideo , Toast.LENGTH_SHORT).show();
                 }
                 break;
             case MOSTRAR_AUDIO:
                 if(resultCode == RESULT_CANCELED) {
-                    Toast.makeText(this, "Ha sucedido un error al intentar cargar el audio", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.txtErrorCargarAudio , Toast.LENGTH_SHORT).show();
                 }
                 break;
         }

@@ -2,6 +2,7 @@ package com.example.reto;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -24,6 +25,10 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,6 +59,11 @@ public class CrearEjercicioActivity extends AppCompatActivity {
     private Boolean audOK = false;
 
     private DBAccesible dao;
+
+    private Bitmap imagenTemporal;
+
+    private Uri uriVideoTemporal;
+    private Uri uriAudioTemporal;
 
     private static final int PEDIR_PERMISOS_AUDIO_Y_CAMARA = 3;
     private static final int CAPTURA_IMAGEN = 101;
@@ -155,17 +165,6 @@ public class CrearEjercicioActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT).show();
         }else{
             Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-            String nombreArchivo = "VID_" + etNombre.getText().toString() + ".mp4";
-
-            File directorio = new File(getFilesDir(), "Videos");
-            if (!directorio.exists()) {
-                directorio.mkdirs(); // Crea el directorio si no existe
-            }
-
-            File video = new File(directorio, nombreArchivo);
-            Uri uriVideo = FileProvider.getUriForFile(this, "com.example.reto.fileprovider", video);
-
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, uriVideo);
             startActivityForResult(intent, CAPTURA_VIDEO);
         }
     }
@@ -176,17 +175,6 @@ public class CrearEjercicioActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT).show();
         } else {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            String nombreArchivo = "IMG_" + etNombre.getText().toString() + ".jpg";
-
-            File directorio = new File(getFilesDir(), "Imagenes");
-            if (!directorio.exists()) {
-                directorio.mkdirs(); // Crea el directorio si no existe
-            }
-
-            File imagen = new File(directorio, nombreArchivo);
-            Uri uriImagen = FileProvider.getUriForFile(this, "com.example.reto.fileprovider", imagen);
-
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, uriImagen);
             startActivityForResult(intent, CAPTURA_IMAGEN);
         }
     }
@@ -218,10 +206,17 @@ public class CrearEjercicioActivity extends AppCompatActivity {
                 ejercicio.setRepeticiones(Integer.parseInt(etRepeticiones.getText().toString()));
                 ejercicio.setDescripcion(etDescripcion.getText().toString());
                 if(imgOK){
-                    ejercicio.setImagen("IMG_"+etNombre.getText().toString());
+                    if (etNombre.getText().toString().isEmpty()) {
+                        Toast.makeText(this, "Primero introduce el nombre del ejercicio", Toast.LENGTH_SHORT).show();
+                    } else {
+                        ejercicio.setImagen("IMG_" + etNombre.getText().toString() + ".jpeg");
+                        guardarImagen();
+                    }
+
                 }
                 if(vidOK){
                     ejercicio.setVideo("VID_"+etNombre.getText().toString());
+                    guardarVideo();
                 }
                 if(audOK){
                     ejercicio.setAudio("AUD_"+etNombre.getText().toString());
@@ -239,6 +234,96 @@ public class CrearEjercicioActivity extends AppCompatActivity {
             }
         }
 
+    }
+
+    private void guardarVideo() {
+        if (uriVideoTemporal != null) {
+            InputStream inputStream = null;
+            OutputStream outputStream = null;
+            try {
+                // Obtener un InputStream desde el URI del video
+                inputStream = getContentResolver().openInputStream(uriVideoTemporal);
+
+                // Crear el archivo de destino en el almacenamiento interno
+                File directory = new File(getFilesDir(), "videos"); // Crea un directorio llamado "videos"
+                if (!directory.exists()) {
+                    directory.mkdirs(); // Si no existe, lo crea
+                }
+
+                // Nombre del archivo de video
+                String videoName = "VID_" + etNombre.getText().toString() + ".mp4";
+                File outputFile = new File(directory, videoName);
+
+                // Crear un OutputStream para escribir el video en el archivo de destino
+                outputStream = new FileOutputStream(outputFile);
+
+                // Copiar el contenido del InputStream al OutputStream (guardar el video)
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = inputStream.read(buffer)) > 0) {
+                    outputStream.write(buffer, 0, length);
+                }
+
+                // Cerrar streams
+                inputStream.close();
+                outputStream.close();
+
+                // Actualizar la URI de video del ejercicio
+                ejercicio.setVideo(outputFile.getAbsolutePath());  // Guardar la ruta del archivo en el objeto Ejercicio
+
+                Toast.makeText(this, "Video guardado correctamente", Toast.LENGTH_SHORT).show();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Error al guardar el video", Toast.LENGTH_SHORT).show();
+            } finally {
+                // Asegurarse de cerrar los streams si algo falla
+                try {
+                    if (inputStream != null) {
+                        inputStream.close();
+                    }
+                    if (outputStream != null) {
+                        outputStream.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            Toast.makeText(this, "No se ha seleccionado un video", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    private void guardarImagen() {
+        // Nombre del archivo que se va a guardar
+        String nombreArchivo = "IMG_" + etNombre.getText().toString() + ".jpeg";
+
+        // Crear el directorio "Imagenes" en el almacenamiento interno
+        File directorio = new File(getFilesDir(), "Imagenes");
+        if (!directorio.exists()) {
+            directorio.mkdirs(); // Si el directorio no existe, lo crea
+        }
+
+        // Crear el archivo donde se guardará la imagen
+        File imagen = new File(directorio, nombreArchivo);
+
+        try {
+            // Abre un flujo de salida para el archivo
+            FileOutputStream fos = new FileOutputStream(imagen);
+
+            // Comprimir la imagen en formato JPEG con calidad 100 (sin pérdida)
+
+            imagenTemporal.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+
+            // Cierra el flujo de salida
+            fos.close();
+
+            // Mostrar un mensaje indicando que la imagen ha sido guardada
+            Toast.makeText(this, "Imagen guardada en almacenamiento interno", Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            Toast.makeText(this, "Error al guardar la imagen", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -279,6 +364,8 @@ public class CrearEjercicioActivity extends AppCompatActivity {
             case CAPTURA_IMAGEN:
                 if(resultCode == RESULT_OK) {
                     imgOK = true;
+                    Bundle extras = data.getExtras();
+                    imagenTemporal = (Bitmap) extras.get("data");
                 } else {
                     Toast.makeText(this, "Captura de imagen cancelada", Toast.LENGTH_SHORT).show();
                 }
@@ -286,6 +373,7 @@ public class CrearEjercicioActivity extends AppCompatActivity {
             case CAPTURA_VIDEO:
                 if(resultCode == RESULT_OK) {
                     vidOK = true;
+                    uriVideoTemporal = data.getData();
                 } else {
                     Toast.makeText(this, "Captura de video cancelada", Toast.LENGTH_SHORT).show();
                 }
@@ -293,6 +381,7 @@ public class CrearEjercicioActivity extends AppCompatActivity {
             case CAPTURA_AUDIO:
                 if(resultCode == RESULT_OK) {
                     audOK = true;
+                    uriAudioTemporal = data.getData();
                 } else {
                     Toast.makeText(this, "Captura de audio cancelada", Toast.LENGTH_SHORT).show();
                 }
