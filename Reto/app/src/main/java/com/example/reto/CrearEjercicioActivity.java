@@ -319,8 +319,6 @@ public class CrearEjercicioActivity extends AppCompatActivity {
             // Cierra el flujo de salida
             fos.close();
 
-            // Mostrar un mensaje indicando que la imagen ha sido guardada
-            Toast.makeText(this, "Imagen guardada en almacenamiento interno", Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             Toast.makeText(this, "Error al guardar la imagen", Toast.LENGTH_SHORT).show();
         }
