@@ -64,7 +64,6 @@ public class MostrarVideo extends AppCompatActivity {
                     vvVideo.start();
                 }
             });
-
             vvVideo.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
