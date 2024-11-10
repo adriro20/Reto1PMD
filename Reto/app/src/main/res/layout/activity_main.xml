@@ -27,7 +27,7 @@
                 android:layout_height="60dp"
                 android:background="@drawable/cell_border"
                 android:gravity="center"
-                android:text="Nombre"
+                android:text="@string/txtNombre"
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -37,7 +37,7 @@
                 android:layout_height="60dp"
                 android:background="@drawable/cell_border"
                 android:gravity="center"
-                android:text="S x R"
+                android:text="@string/txtSxR"
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -54,7 +54,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.024"
-        tools:srcCompat="@tools:sample/avatars" />
+        tools:srcCompat="@drawable/logo1" />
 
     <TextView
         android:id="@+id/textView"
@@ -62,6 +62,7 @@
         android:layout_height="43dp"
         android:text="@string/text_inicio"
         android:textSize="34sp"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -96,6 +97,8 @@
         android:id="@+id/comboGrupoMusc"
         android:layout_width="186dp"
         android:layout_height="57dp"
+        android:background="@color/white"
+        android:alpha="0.7"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.168"
