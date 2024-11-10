@@ -25,9 +25,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class CrearEjercicioActivity extends AppCompatActivity {
 
@@ -56,10 +54,8 @@ public class CrearEjercicioActivity extends AppCompatActivity {
     private Boolean audOK = false;
 
     private DBAccesible dao;
-    
-    private static final int REQUEST_CAMERA_PERMISSION = 1;
-    private static final int REQUEST_AUDIO_PERMISSION = 2;
-    private static final int REQUEST_CAMERA_AND_AUDIO_PERMISSION = 3;
+
+    private static final int PEDIR_PERMISOS_AUDIO_Y_CAMARA = 3;
     private static final int CAPTURA_IMAGEN = 101;
     private static final int CAPTURA_VIDEO = 102;
     private static final int CAPTURA_AUDIO = 103;
@@ -77,12 +73,12 @@ public class CrearEjercicioActivity extends AppCompatActivity {
 
         dao = new DBAccess(this);
 
-        etNombre = findViewById(R.id.etNombre);
-        etSeries = findViewById(R.id.etSeries);
-        etRepeticiones = findViewById(R.id.etRepeticiones);
-        etDescripcion = findViewById(R.id.etDescripcion);
+        etNombre = findViewById(R.id.tvNombre);
+        etSeries = findViewById(R.id.tvSeries);
+        etRepeticiones = findViewById(R.id.tvRepeticiones);
+        etDescripcion = findViewById(R.id.tvDescripcion);
 
-        cbGrupo = findViewById(R.id.cbGrupo);
+        cbGrupo = findViewById(R.id.tvGrupo);
 
         btnSalir = findViewById(R.id.btnSalir);
         btnSalir.setOnClickListener(this::cerrarApp);
@@ -124,7 +120,7 @@ public class CrearEjercicioActivity extends AppCompatActivity {
             // Solicita ambos permisos en una sola llamada
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO},
-                    REQUEST_CAMERA_AND_AUDIO_PERMISSION);
+                    PEDIR_PERMISOS_AUDIO_Y_CAMARA);
         }
     }
 
@@ -249,20 +245,20 @@ public class CrearEjercicioActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (requestCode == REQUEST_CAMERA_AND_AUDIO_PERMISSION) {
-            boolean cameraPermissionGranted = false;
-            boolean audioPermissionGranted = false;
+        if (requestCode == PEDIR_PERMISOS_AUDIO_Y_CAMARA) {
+            boolean permisosCamara = false;
+            boolean permisosAudio = false;
 
             // Revisa los resultados de ambos permisos
             for (int i = 0; i < permissions.length; i++) {
                 if (permissions[i].equals(Manifest.permission.CAMERA)) {
-                    cameraPermissionGranted = grantResults[i] == PackageManager.PERMISSION_GRANTED;
+                    permisosCamara = grantResults[i] == PackageManager.PERMISSION_GRANTED;
                 } else if (permissions[i].equals(Manifest.permission.RECORD_AUDIO)) {
-                    audioPermissionGranted = grantResults[i] == PackageManager.PERMISSION_GRANTED;
+                    permisosAudio = grantResults[i] == PackageManager.PERMISSION_GRANTED;
                 }
             }
 
-            if (cameraPermissionGranted && audioPermissionGranted) {
+            if (permisosCamara && permisosAudio) {
                 // Ambos permisos fueron concedidos
                 Toast.makeText(this, "Permisos de cámara y audio concedidos", Toast.LENGTH_SHORT).show();
             } else {

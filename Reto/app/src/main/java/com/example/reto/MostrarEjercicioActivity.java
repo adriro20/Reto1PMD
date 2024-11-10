@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -17,14 +19,22 @@ public class MostrarEjercicioActivity extends AppCompatActivity {
 
     private Ejercicio ejercicio;
 
-    private EditText etNombre;
-    private EditText etGrupo;
-    private EditText etSeries;
-    private EditText etRepeticiones;
-    private EditText etDescripcion;
+    private TextView tvNombre;
+    private TextView tvGrupo;
+    private TextView tvSeries;
+    private TextView tvRepeticiones;
+    private TextView tvDescripcion;
 
     private Button btnSalir;
     private Button btnVolver;
+
+    private ImageButton btnImagen;
+    private ImageButton btnVideo;
+    private ImageButton btnAudio;
+
+    private final int MOSTRAR_IMAGEN = 1;
+    private final int MOSTRAR_VIDEO = 2;
+    private final int MOSTRAR_AUDIO = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,11 +47,14 @@ public class MostrarEjercicioActivity extends AppCompatActivity {
             return insets;
         });
 
-        etNombre = findViewById(R.id.etNombre);
-        etGrupo = findViewById(R.id.etGrupo);
-        etSeries = findViewById(R.id.etSeries);
-        etRepeticiones = findViewById(R.id.etRepeticiones);
-        etDescripcion = findViewById(R.id.etDescripcion);
+        Intent recogerIntent = getIntent();
+        this.ejercicio = (Ejercicio) recogerIntent.getSerializableExtra("EJERCICIO");
+
+        tvNombre = findViewById(R.id.tvNombre);
+        tvGrupo = findViewById(R.id.tvGrupo);
+        tvSeries = findViewById(R.id.tvSeries);
+        tvRepeticiones = findViewById(R.id.tvRepeticiones);
+        tvDescripcion = findViewById(R.id.tvDescripcion);
 
         btnSalir = findViewById(R.id.btnSalir);
         btnSalir.setOnClickListener(this::cerrarApp);
@@ -49,14 +62,21 @@ public class MostrarEjercicioActivity extends AppCompatActivity {
         btnVolver = findViewById(R.id.btnVolver);
         btnVolver.setOnClickListener(this::volverAtras);
 
-        Intent recogerIntent = getIntent();
-        ejercicio = (Ejercicio) recogerIntent.getSerializableExtra("EJERCICIO");
+        btnImagen = findViewById(R.id.ibImagen);
+        btnImagen.setOnClickListener(this::cargarImagen);
+
+        btnVideo = findViewById(R.id.ibVideo);
+        btnVideo.setOnClickListener(this::cargarVideo);
+
+        btnAudio = findViewById(R.id.ibAudio);
+        btnAudio.setOnClickListener(this::cargarAudio);
+
         if(ejercicio != null){
-            etNombre.setText(ejercicio.getNombre());
-            etGrupo.setText(ejercicio.getGrupo());
-            etSeries.setText(ejercicio.getSeries());
-            etRepeticiones.setText(ejercicio.getRepeticiones());
-            etDescripcion.setText(ejercicio.getDescripcion());
+            tvNombre.setText(ejercicio.getNombre());
+            tvGrupo.setText(ejercicio.getGrupo());
+            tvSeries.setText(ejercicio.getSeries());
+            tvRepeticiones.setText(ejercicio.getRepeticiones());
+            tvDescripcion.setText(ejercicio.getDescripcion());
         }else{
             Toast.makeText(this, "Ha sucedido un error al cargar el ejercicio seleccionado" ,
                     Toast.LENGTH_LONG).show();
@@ -65,9 +85,26 @@ public class MostrarEjercicioActivity extends AppCompatActivity {
             finish();
         }
 
-
-
     }
+
+    private void cargarAudio(View view) {
+        Intent intent = new Intent(MostrarEjercicioActivity.this, MostrarAudio.class);
+        intent.putExtra("AUDIO", ejercicio.getAudio());
+        startActivityForResult(intent, MOSTRAR_AUDIO);
+    }
+
+    private void cargarVideo(View view) {
+        Intent intent = new Intent(MostrarEjercicioActivity.this, MostrarVideo.class);
+        intent.putExtra("VIDEO", ejercicio.getVideo());
+        startActivityForResult(intent, MOSTRAR_VIDEO);
+    }
+
+    private void cargarImagen(View view) {
+        Intent intent = new Intent(MostrarEjercicioActivity.this, MostrarImagen.class);
+        intent.putExtra("IMAGEN", ejercicio.getImagen());
+        startActivityForResult(intent, MOSTRAR_IMAGEN);
+    }
+
 
     private void cerrarApp(View view) {
         finishAffinity();
@@ -77,5 +114,28 @@ public class MostrarEjercicioActivity extends AppCompatActivity {
         Intent intent = new Intent();
         setResult(RESULT_OK, intent);
         finish();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode){
+            case MOSTRAR_IMAGEN:
+                if(resultCode == RESULT_CANCELED) {
+                    Toast.makeText(this, "Ha sucedido un error al intentar cargar la imagen", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case MOSTRAR_VIDEO:
+                if(resultCode == RESULT_CANCELED) {
+                    Toast.makeText(this, "Ha sucedido un error al intentar cargar el video", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case MOSTRAR_AUDIO:
+                if(resultCode == RESULT_CANCELED) {
+                    Toast.makeText(this, "Ha sucedido un error al intentar cargar el audio", Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
     }
 }
