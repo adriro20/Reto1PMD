@@ -8,21 +8,11 @@
     tools:context=".activities.MostrarEjercicioActivity"
     android:background="@drawable/imgfondo">
 
-    <Button
-        android:id="@+id/btnCrear"
-        android:layout_width="181dp"
-        android:layout_height="41dp"
-        android:text="@string/txtCrear"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ibVideo" />
-
     <ImageButton
         android:id="@+id/ibVideo"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="64dp"
         app:layout_constraintEnd_toStartOf="@+id/ibAudio"
         app:layout_constraintHorizontal_bias="0.509"
         app:layout_constraintStart_toEndOf="@+id/ibImagen"
