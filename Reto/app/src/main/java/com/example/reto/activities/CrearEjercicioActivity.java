@@ -166,14 +166,23 @@ public class CrearEjercicioActivity extends AppCompatActivity {
             recorder.release();
             recorder = null;
             grabando = false;
-
             // Crear URI para el archivo grabado
             uriAudioTemporal = Uri.fromFile(archivoAudioTemporal);
             audOK = true;
             Toast.makeText(this, R.string.txtGrabacionTerminada, Toast.LENGTH_LONG).show();
+            btnCrear.setEnabled(true);
+            btnVolver.setEnabled(true);
+            btnSalir.setEnabled(true);
+            ibImagen.setEnabled(true);
+            ibVideo.setEnabled(true);
         }else{
-            btnAudio.setText(R.string.txtPararAudio);
             try {
+                btnAudio.setText(R.string.txtPararAudio);
+                btnCrear.setEnabled(false);
+                btnVolver.setEnabled(false);
+                btnSalir.setEnabled(false);
+                ibImagen.setEnabled(false);
+                ibVideo.setEnabled(false);
                 archivoAudioTemporal = File.createTempFile("audio", ".mp3", getCacheDir());
                 recorder = new MediaRecorder();
                 recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -185,9 +194,13 @@ public class CrearEjercicioActivity extends AppCompatActivity {
                 grabando = true;
                 Toast.makeText(this, R.string.txtGrabando, Toast.LENGTH_LONG).show();
             } catch (IOException e) {
-                e.printStackTrace();
                 Toast.makeText(this, R.string.txtErrorGrabacionAudio, Toast.LENGTH_SHORT).show();
                 btnAudio.setText(R.string.txtGrabarAudio);
+                btnCrear.setEnabled(true);
+                btnVolver.setEnabled(true);
+                btnSalir.setEnabled(true);
+                ibImagen.setEnabled(true);
+                ibVideo.setEnabled(true);
             }
 
         }
@@ -207,36 +220,41 @@ public class CrearEjercicioActivity extends AppCompatActivity {
 
     private void crearEjercicio(View view) {
         ejercicio = new Ejercicio();
-        if(etNombre.getText().toString().isEmpty() || cbGrupo.getSelectedItem().equals(0)
-                || etSeries.getText().toString().isEmpty() || etRepeticiones.getText().toString().isEmpty()
-                || etDescripcion.getText().toString().isEmpty() || !imgOK || !vidOK || !audOK){
+        if(etNombre.getText().toString().isEmpty() || etSeries.getText().toString().isEmpty() ||
+                etRepeticiones.getText().toString().isEmpty() ||
+                etDescripcion.getText().toString().isEmpty() || !imgOK || !vidOK || !audOK){
             Toast.makeText(this, R.string.txtCamposVacios ,
                     Toast.LENGTH_LONG).show();
         }else{
-            ejercicio.setNombre(etNombre.getText().toString());
-            ejercicio.setGrupo(cbGrupo.getSelectedItem().toString());
-            ejercicio.setSeries(Integer.parseInt(etSeries.getText().toString()));
-            ejercicio.setRepeticiones(Integer.parseInt(etRepeticiones.getText().toString()));
-            ejercicio.setDescripcion(etDescripcion.getText().toString());
-            if(imgOK){
-                guardarImagen();
-                ejercicio.setImagen("IMG_" + etNombre.getText().toString() + ".jpeg");
-            }
-            if(vidOK){
-                guardarVideo();
-                ejercicio.setVideo("VID_"+etNombre.getText().toString()+".mp4");
-            }
-            if(audOK){
-                guardarAudio();
-                ejercicio.setAudio("AUD_"+etNombre.getText().toString()+".mp3");
-            }
+            if(cbGrupo.getSelectedItem().toString().equals(getText(R.string.txtSelecciona).toString())){
+                Toast.makeText(this, R.string.txtSeleccionaGrupoMuscular ,
+                        Toast.LENGTH_LONG).show();
+            }else{
+                ejercicio.setNombre(etNombre.getText().toString());
+                ejercicio.setGrupo(cbGrupo.getSelectedItem().toString());
+                ejercicio.setSeries(Integer.parseInt(etSeries.getText().toString()));
+                ejercicio.setRepeticiones(Integer.parseInt(etRepeticiones.getText().toString()));
+                ejercicio.setDescripcion(etDescripcion.getText().toString());
+                if(imgOK){
+                    guardarImagen();
+                    ejercicio.setImagen("IMG_" + etNombre.getText().toString() + ".jpeg");
+                }
+                if(vidOK){
+                    guardarVideo();
+                    ejercicio.setVideo("VID_"+etNombre.getText().toString()+".mp4");
+                }
+                if(audOK){
+                    guardarAudio();
+                    ejercicio.setAudio("AUD_"+etNombre.getText().toString()+".mp3");
+                }
 
-            dao.setEjercicio(ejercicio);
+                dao.setEjercicio(ejercicio);
 
-            Toast.makeText(this, R.string.txtEjercicioGuardado , Toast.LENGTH_LONG).show();
-            Intent intent = new Intent();
-            setResult(RESULT_OK, intent);
-            finish();
+                Toast.makeText(this, R.string.txtEjercicioGuardado , Toast.LENGTH_LONG).show();
+                Intent intent = new Intent();
+                setResult(RESULT_OK, intent);
+                finish();
+            }
 
         }
 
