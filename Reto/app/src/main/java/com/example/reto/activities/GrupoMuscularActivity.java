@@ -30,12 +30,14 @@ import com.example.reto.model.Ejercicio;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class GrupoMuscularActivity extends AppCompatActivity {
     private String grupo;
     private TextView tit;
     private Button btnSalir;
     private Button btnVolver;
+    private Button btnOrdenar;
     private Spinner cbGrupo;
     private TableLayout tabla;
     private Map<String, Ejercicio> ejercicios ;
@@ -57,12 +59,14 @@ public class GrupoMuscularActivity extends AppCompatActivity {
 
         dao = new DBAccess(this);
 
+
         Intent intent = getIntent();
         if (intent.hasExtra("GRUPO")) {
             grupo = intent.getStringExtra("GRUPO");
         } else {
             grupo = "";
         }
+        ejercicios = dao.getEjerciciosGrupoMuscular(grupo);
 
         tit = (TextView) findViewById(R.id.textTitulo);
         tit.setText(grupo);
@@ -84,6 +88,15 @@ public class GrupoMuscularActivity extends AppCompatActivity {
             }
         });
 
+       btnOrdenar  = (Button) findViewById(R.id.btnOrdenar);
+       btnOrdenar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Map<String, Ejercicio> ejerciciosOrdenados = new TreeMap<>(ejercicios);
+                cargarTabla(ejerciciosOrdenados);
+            }
+        });
+
         cbGrupo = (Spinner) findViewById(R.id.cboxMusculos);
         grupos = dao.getGrupos();
         cargarCombo();
@@ -96,7 +109,8 @@ public class GrupoMuscularActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 grupo = cbGrupo.getSelectedItem().toString();
-                cargarTabla();
+                ejercicios = dao.getEjerciciosGrupoMuscular(grupo);
+                cargarTabla(ejercicios);
                 tit.setText(cbGrupo.getSelectedItem().toString());
             }
 
@@ -108,7 +122,7 @@ public class GrupoMuscularActivity extends AppCompatActivity {
 
         tabla = (TableLayout) findViewById(R.id.tablaEjer);
 
-        cargarTabla();
+        cargarTabla(ejercicios);
     }
 
     private void cargarCombo() {
@@ -117,8 +131,8 @@ public class GrupoMuscularActivity extends AppCompatActivity {
         cbGrupo.setAdapter(adapter);
     }
 
-    private void cargarTabla() {
-        ejercicios = dao.getEjerciciosGrupoMuscular(grupo);
+    private void cargarTabla(Map<String, Ejercicio> ejercicios) {
+
 
         int rowCount = tabla.getChildCount();
         if (rowCount > 1) {
@@ -143,6 +157,7 @@ public class GrupoMuscularActivity extends AppCompatActivity {
                 ImageView imagen = new ImageView(this);
 
                 imagen.setPadding(10, 10, 10, 10); // Padding para hacer mÃ¡s grande la celda
+                imagen.setMaxWidth(135);
                 File archivoImagen = new File(getFilesDir(), "IMAGENES/" + ejer.getValue().getImagen());
                 if(archivoImagen.exists()){
                     Bitmap bitmap = BitmapFactory.decodeFile(archivoImagen.getAbsolutePath());
@@ -161,6 +176,7 @@ public class GrupoMuscularActivity extends AppCompatActivity {
                 txtNombre.setText(ejer.getValue().getNombre());
                 txtNombre.setPadding(10, 10, 10, 10); // Padding para hacer mÃ¡s grande la celda
                 txtNombre.setGravity(Gravity.CENTER); // Centrar el texto
+                txtNombre.setMaxWidth(135);
                 txtNombre.setTextSize(25);
                 row.addView(txtNombre);
 
@@ -170,6 +186,7 @@ public class GrupoMuscularActivity extends AppCompatActivity {
                 txtSeries.setPadding(10, 10, 10, 10); // Padding para hacer mÃ¡s grande la celda
                 txtSeries.setGravity(Gravity.CENTER); // Centrar el texto
                 txtSeries.setTextSize(25);
+                txtSeries.setMaxWidth(135);
                 row.setBackgroundColor(getResources().getColor(R.color.white));
                 row.setAlpha(0.7f);
                 row.addView(txtSeries);

@@ -38,4 +38,5 @@
     <string name="txtAudio">Audio</string>
     <string name="txtImagen">Imagen</string>
     <string name="txtVideo">Video</string>
+    <string name="txtOrdenar">ordenar</string>
 </resources>
