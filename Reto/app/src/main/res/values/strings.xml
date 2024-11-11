@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">GymFLow</string>
-    <string name="text_inicio">Start</string>
-    <string name="text_anadir">Create</string>
+    <string name="text_inicio">Inicio</string>
+    <string name="text_anadir">Añadir</string>
     <string name="text_ver">Ver</string>
     <string name="txtEjercicio">Ejercicio</string>
     <string name="txtNombre">Nombre</string>
