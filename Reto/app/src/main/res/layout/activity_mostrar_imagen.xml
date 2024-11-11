@@ -47,7 +47,7 @@
         android:id="@+id/ivImagen"
         android:layout_width="329dp"
         android:layout_height="591dp"
-        android:background="@color/white"
+        android:background="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
